@@ -1,0 +1,31 @@
+package com.zlatenov.videoproviderservice.controller;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * @author Angel Zlatenov
+ */
+
+@RestController
+@RequiredArgsConstructor
+public class VideoProviderController {
+
+
+    @PostMapping(path = "/videos")
+    private ResponseEntity login(){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .build();
+    }
+
+    @PostMapping(path = "/register")
+    private ResponseEntity register(){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .build();
+    }
+}

@@ -1,6 +1,9 @@
 package com.zlatenov.videoproviderservice.controller;
 
-import lombok.RequiredArgsConstructor;
+import com.zlatenov.nospoilersportsapi.model.dto.GameDto;
+import com.zlatenov.nospoilersportsapi.model.dto.VideosDto;
+import com.zlatenov.videoproviderservice.service.VideoService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,19 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 @RestController
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class VideoProviderController {
 
+    private VideoService videoService;
 
     @PostMapping(path = "/videos")
-    private ResponseEntity login(){
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .build();
-    }
-
-    @PostMapping(path = "/register")
-    private ResponseEntity register(){
+    private ResponseEntity login(GameDto gameDto) {
+        VideosDto videosDto = videoService.getVideosForGame(gameDto);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .build();

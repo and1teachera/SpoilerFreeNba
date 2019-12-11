@@ -7,9 +7,9 @@ import com.google.api.client.util.DateTime;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
-import com.zlatenov.nospoilersportsapi.model.dto.GameDto;
-import com.zlatenov.nospoilersportsapi.model.dto.Video;
-import com.zlatenov.nospoilersportsapi.model.dto.VideosDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.GameDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.Video;
+import com.zlatenov.spoilerfreesportsapi.model.dto.VideosDto;
 import com.zlatenov.videoproviderservice.auth.Auth;
 import org.springframework.stereotype.Service;
 

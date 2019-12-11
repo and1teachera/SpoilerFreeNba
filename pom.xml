@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.zlatenov</groupId>
-    <artifactId>no-spoiler-sports</artifactId>
+    <artifactId>spoilerfree-sports</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>no-spoiler-sports</name>
+    <name>spoilerfree-sports</name>
     <description>Spoiler free NBA</description>
 
     <properties>
@@ -85,7 +85,7 @@
         </dependency>
         <dependency>
             <groupId>com.zlatenov</groupId>
-            <artifactId>no-spoiler-sports-api</artifactId>
+            <artifactId>spoilerfree-sports-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>

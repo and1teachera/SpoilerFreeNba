@@ -1,6 +1,6 @@
 package com.zlatenov.userauthorisationservice.model;
 
-import com.zlatenov.nospoilersportsapi.enums.Role;
+import com.zlatenov.spoilerfreesportsapi.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

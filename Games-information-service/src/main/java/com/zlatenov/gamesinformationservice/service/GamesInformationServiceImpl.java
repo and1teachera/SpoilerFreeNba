@@ -13,7 +13,7 @@ import com.zlatenov.gamesinformationservice.repository.GameRepository;
 import com.zlatenov.gamesinformationservice.repository.TeamRepository;
 import com.zlatenov.gamesinformationservice.transformer.GamesModelTransformer;
 import com.zlatenov.gamesinformationservice.transformer.TeamsModelTransformer;
-import com.zlatenov.nospoilersportsapi.model.exception.UnresponsiveAPIException;
+import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
 import lombok.AllArgsConstructor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

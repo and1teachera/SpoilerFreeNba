@@ -1,7 +1,7 @@
 package com.zlatenov.nbastandingsservice.initialize;
 
 import com.zlatenov.nbastandingsservice.service.StandingsService;
-import com.zlatenov.nospoilersportsapi.model.exception.UnresponsiveAPIException;
+import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;

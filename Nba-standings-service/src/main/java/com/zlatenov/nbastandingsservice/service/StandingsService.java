@@ -1,7 +1,7 @@
 package com.zlatenov.nbastandingsservice.service;
 
 import com.zlatenov.nbastandingsservice.model.StandingsServiceModel;
-import com.zlatenov.nospoilersportsapi.model.exception.UnresponsiveAPIException;
+import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
 
 import java.io.IOException;
 import java.util.List;

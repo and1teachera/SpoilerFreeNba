@@ -6,7 +6,7 @@ import com.zlatenov.spoilerfreesportsapi.model.dto.LoggedUserDto;
 import com.zlatenov.spoilerfreesportsapi.model.dto.RegisterUserDto;
 import com.zlatenov.spoilerfreesportsapi.model.exception.AuthorisationException;
 import com.zlatenov.spoilerfreesportsapi.model.exception.CannotRegisterUserException;
-import com.zlatenov.userauthorisationservice.service.UserAuthenticationServiceImpl;
+import com.zlatenov.userauthorisationservice.service.UserAuthenticationService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,13 +21,13 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class UserAuthenticationController {
 
-    private final UserAuthenticationServiceImpl userService;
+    private final UserAuthenticationService userAuthenticationService;
 
     @PostMapping(path = "/login")
     private ResponseEntity login(@RequestBody AuthenticateUserDto authenticateUserDto) {
         LoggedUserDto loggedUserDto;
         try {
-            loggedUserDto = userService.logUser(authenticateUserDto);
+            loggedUserDto = userAuthenticationService.logUser(authenticateUserDto);
         }
         catch (AuthorisationException e) {
             return ResponseEntity.status(401).build();
@@ -41,7 +41,7 @@ public class UserAuthenticationController {
         LoggedUserDto loggedUserDto;
         try {
             registerUserDto.setRole(Role.ADMIN);
-            loggedUserDto = userService.registerUser(registerUserDto);
+            loggedUserDto = userAuthenticationService.registerUser(registerUserDto);
         }
         catch (CannotRegisterUserException e) {
             return ResponseEntity.status(400).body(e.getMessage());

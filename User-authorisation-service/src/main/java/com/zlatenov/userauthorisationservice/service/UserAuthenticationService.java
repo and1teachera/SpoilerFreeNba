@@ -12,8 +12,8 @@ import com.zlatenov.spoilerfreesportsapi.model.exception.CannotRegisterUserExcep
 
 public interface UserAuthenticationService {
 
-        LoggedUserDto logUser(AuthenticateUserDto authenticateUserDto) throws AuthorisationException;
+    LoggedUserDto logUser(AuthenticateUserDto authenticateUserDto) throws AuthorisationException;
 
-        LoggedUserDto registerUser(RegisterUserDto registerUserDto) throws CannotRegisterUserException;
+    LoggedUserDto registerUser(RegisterUserDto registerUserDto) throws CannotRegisterUserException;
 
 }

@@ -14,16 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class ScheduleController {
 
     @PostMapping(path = "/login")
-    private ResponseEntity login(){
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .build();
+    private ResponseEntity login() {
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PostMapping(path = "/register")
-    private ResponseEntity register(){
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .build();
+    private ResponseEntity register() {
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

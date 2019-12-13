@@ -4,7 +4,6 @@ import com.zlatenov.gamesinformationservice.model.GameResponseModel;
 import com.zlatenov.gamesinformationservice.model.GameServiceModel;
 import com.zlatenov.gamesinformationservice.model.Score;
 import com.zlatenov.gamesinformationservice.model.entity.Game;
-import com.zlatenov.gamesinformationservice.model.entity.Team;
 import com.zlatenov.spoilerfreesportsapi.model.dto.GameInformationDto;
 import com.zlatenov.spoilerfreesportsapi.model.dto.GamesDto;
 import com.zlatenov.spoilerfreesportsapi.model.dto.TeamScoreDto;
@@ -89,8 +88,8 @@ public class GamesModelTransformer {
         Game gameEntity = new Game();
         modelMapper.map(gameServiceModel, gameEntity);
 //        teamsModelTransformer.transformToTeamEntity(gameServiceModel.getHomeTeamServiceModel())
-        gameEntity.setHomeTeam(Team.builder().fullName(gameServiceModel.getHomeTeamFullName()).build());
-        gameEntity.setAwayTeam(Team.builder().fullName(gameServiceModel.getAwayTeamFullName()).build());
+        gameEntity.setHomeTeam(gameServiceModel.getHomeTeamFullName());
+        gameEntity.setAwayTeam(gameServiceModel.getAwayTeamFullName());
         gameEntity.setStartTimeUtc(Date.from(
                 gameServiceModel.getStartTime()
                         .withZoneSameInstant(ZoneId.of(ZoneOffset.UTC.getId()))
@@ -118,8 +117,8 @@ public class GamesModelTransformer {
                     ZonedDateTime.ofInstant(gameEntity.getEndTimeUtc().toInstant(), ZoneId.of(ZoneOffset.UTC.getId())));
         }
 
-        gameServiceModel.setHomeTeamFullName(gameEntity.getHomeTeam().getFullName());
-        gameServiceModel.setAwayTeamFullName(gameEntity.getAwayTeam().getFullName());
+        gameServiceModel.setHomeTeamFullName(gameEntity.getHomeTeam());
+        gameServiceModel.setAwayTeamFullName(gameEntity.getAwayTeam());
         return gameServiceModel;
     }
 }

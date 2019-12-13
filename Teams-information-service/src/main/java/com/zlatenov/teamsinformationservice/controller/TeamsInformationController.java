@@ -26,11 +26,11 @@ public class TeamsInformationController {
 
     @GetMapping(path = "/teams")
     private ResponseEntity teams() throws IOException, UnresponsiveAPIException {
-        List<TeamServiceModel> allGames = teamsInformationService.getAllTeams();
-        TeamsDto gamesDto = teamsModelTransformer.transformToTeamsDto(allGames);
+        List<TeamServiceModel> allTeams = teamsInformationService.getAllTeams();
+        TeamsDto teamsDto = teamsModelTransformer.transformToTeamsDto(allTeams);
 
         return ResponseEntity
-                .ok(gamesDto);
+                .ok(teamsDto);
 
     }
 

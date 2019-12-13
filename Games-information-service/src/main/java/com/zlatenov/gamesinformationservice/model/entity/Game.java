@@ -5,10 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import java.util.Date;
 
 /**
@@ -26,15 +23,8 @@ public class Game extends BaseEntity {
     private String arena;
     private String city;
     private String gameDuration;
-
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "homeTeam_id", nullable = false)
-    private Team homeTeam;
-
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "awayTeam_id", nullable = false)
-    private Team awayTeam;
-
+    private String homeTeam;
+    private String awayTeam;
     private Short homeTeamScore;
     private Short awayTeamScore;
 }

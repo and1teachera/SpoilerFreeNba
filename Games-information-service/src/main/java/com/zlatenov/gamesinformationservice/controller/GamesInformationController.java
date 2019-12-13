@@ -1,13 +1,9 @@
 package com.zlatenov.gamesinformationservice.controller;
 
 import com.zlatenov.gamesinformationservice.model.GameServiceModel;
-import com.zlatenov.gamesinformationservice.model.TeamServiceModel;
 import com.zlatenov.gamesinformationservice.service.GamesInformationServiceImpl;
-import com.zlatenov.gamesinformationservice.service.TeamsInformationService;
 import com.zlatenov.gamesinformationservice.transformer.GamesModelTransformer;
-import com.zlatenov.gamesinformationservice.transformer.TeamsModelTransformer;
 import com.zlatenov.spoilerfreesportsapi.model.dto.GamesDto;
-import com.zlatenov.spoilerfreesportsapi.model.dto.TeamsDto;
 import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +24,6 @@ public class GamesInformationController {
 
     private final GamesInformationServiceImpl gamesInformationService;
     private final GamesModelTransformer gamesModelTransformer;
-    private final TeamsInformationService teamsInformationService;
-    private final TeamsModelTransformer teamsModelTransformer;
 
     @GetMapping(path = "/games")
     private ResponseEntity games() throws IOException, UnresponsiveAPIException {
@@ -41,26 +35,8 @@ public class GamesInformationController {
                                                                                              gameServiceModel.getStartTime().isAfter(
                                                                                                      zonedDateTime))
                                                                              .collect(Collectors.toList()));
-
-        //.stream().limit(500).collect(Collectors.toList())
-//        Flux<GameInformationDto> gameInformationDtoFlux = Flux.fromIterable(gamesDto.getGameInformationDtos())
-//                .publishOn(Schedulers.parallel());
-
-//        gameInformationDtoFlux.publish();
         return ResponseEntity
                 .ok(gamesDto);
-    }
-
-
-
-    @GetMapping(path = "/teams")
-    private ResponseEntity teams() throws IOException, UnresponsiveAPIException {
-        List<TeamServiceModel> allGames = teamsInformationService.getAllTeams();
-        TeamsDto gamesDto = teamsModelTransformer.transformToTeamsDto(allGames);
-
-        return ResponseEntity
-                .ok(gamesDto);
-
     }
 
 }

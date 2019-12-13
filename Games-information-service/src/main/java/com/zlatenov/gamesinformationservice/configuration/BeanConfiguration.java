@@ -5,6 +5,7 @@ import okhttp3.OkHttpClient;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.reactive.function.client.WebClient;
 
 /**
  * @author Angel Zlatenov
@@ -20,6 +21,11 @@ public class BeanConfiguration {
     @Bean
     public OkHttpClient okHttpClient() {
         return new OkHttpClient();
+    }
+
+    @Bean
+    public WebClient.Builder builder() {
+        return WebClient.builder();
     }
 
     @Bean

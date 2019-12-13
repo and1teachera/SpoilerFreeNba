@@ -15,12 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class TeamResponseModel {
 
-    private String shortName;
     private String fullName;
-    private String nickname;
-    private String logo;
-    private String city;
-    private Leagues leagues;
 	private Integer nbaFranchise;
     private Score score;
 

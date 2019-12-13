@@ -26,7 +26,7 @@ public class TeamServiceImpl implements TeamService {
     public void fetchAllTeams() {
         TeamsDto teamsDto = webClientBuilder.build()
                 .get()
-                .uri("localhost:8083/teams")
+                .uri("localhost:8087/teams")
                 .retrieve()
                 .bodyToMono(TeamsDto.class)
                 .block();

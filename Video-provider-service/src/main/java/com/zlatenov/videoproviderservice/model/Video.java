@@ -1,12 +1,10 @@
-package com.zlatenov.spoilerfreesportsapi.model.dto;
+package com.zlatenov.videoproviderservice.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.List;
 
 /**
  * @author Angel Zlatenov
@@ -17,7 +15,10 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class VideosDto {
+public class Video {
 
-    private List<VideoDto> videoList;
+    private String id;
+    private String duration;
+    private String name;
+    private String channel;
 }

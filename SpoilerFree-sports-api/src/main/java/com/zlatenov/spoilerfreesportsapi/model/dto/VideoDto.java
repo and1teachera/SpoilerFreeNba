@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 /**
  * @author Angel Zlatenov
  */
@@ -17,7 +15,8 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class VideosDto {
+public class VideoDto {
 
-    private List<VideoDto> videoList;
+    private String id;
+    private String duration;
 }

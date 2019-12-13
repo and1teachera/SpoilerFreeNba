@@ -7,23 +7,39 @@ import com.google.api.client.util.DateTime;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
 import com.zlatenov.spoilerfreesportsapi.model.dto.GameDto;
-import com.zlatenov.spoilerfreesportsapi.model.dto.Video;
+import com.zlatenov.spoilerfreesportsapi.model.dto.VideoDto;
 import com.zlatenov.spoilerfreesportsapi.model.dto.VideosDto;
 import com.zlatenov.videoproviderservice.auth.Auth;
+import com.zlatenov.videoproviderservice.model.Channel;
+import com.zlatenov.videoproviderservice.model.SearchOptions;
+import com.zlatenov.videoproviderservice.model.Video;
+import lombok.AllArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 /**
  * @author Angel Zlatenov
  */
 @Service
+@AllArgsConstructor
 public class VideoService {
+
+    private static final String CHANNELS_JSON_FILE_PATH = "/home/angel/IdeaProjects/SpoilerFreeNba/Video-provider-service/src/main/resources/channels.json";
+    private Gson gson;
 
     /**
      * Define a global variable that identifies the name of a file that
@@ -46,11 +62,70 @@ public class VideoService {
      * @return
      */
     public VideosDto getVideosForGame(GameDto gameDto) {
-        //List<String> channels =
-        return null;
+        List<Channel> channels;
+        try {
+            channels = createListOfChannels();
+        }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+        List<SearchOptions> searchOptions = createSearchOptionsForGame(gameDto, channels);
+        List<Video> videoList = composeVideoList(searchOptions);
+
+        return VideosDto.builder().videoList(transformVideosToDtoList(videoList)).build();
     }
 
-    private Video searchForVideo(String searchContent, String duration, Date date, String channelId) {
+    private List<VideoDto> transformVideosToDtoList(List<Video> videoList) {
+        return videoList.stream().map(this::transformToVideoDto).collect(Collectors.toList());
+    }
+
+    private VideoDto transformToVideoDto(Video video) {
+        return VideoDto.builder().duration(video.getDuration()).id(video.getId()).build();
+    }
+
+    private List<Video> composeVideoList(List<SearchOptions> searchOptions) {
+        List<Video> videoList = new ArrayList<>();
+        for (SearchOptions searchOption : searchOptions) {
+            Video video = searchForVideo(searchOption);
+            if (video != null) {
+                videoList.add(video);
+            }
+        }
+        return videoList;
+    }
+
+    private List<Channel> createListOfChannels() throws FileNotFoundException {
+        Type channelListType = new TypeToken<List<Channel>>() {
+        }.getType();
+        JsonReader reader = new JsonReader(new FileReader(CHANNELS_JSON_FILE_PATH));
+        return gson.fromJson(reader, channelListType);
+    }
+
+    private List<SearchOptions> createSearchOptionsForGame(GameDto gameDto, List<Channel> channels) {
+        List<SearchOptions> searchOptions = new ArrayList<>();
+        channels.forEach(channel -> searchOptions.addAll(createSearchOptionForGame(channel, gameDto)));
+        return searchOptions;
+    }
+
+    private List<SearchOptions> createSearchOptionForGame(Channel channel, GameDto gameDto) {
+        List<SearchOptions> searchOptions = new ArrayList<>();
+        String videoName = composeVideoName(gameDto);
+        channel.getDurations()
+                .forEach(duration -> searchOptions.add(SearchOptions.builder()
+                                                               .channel(channel.getId())
+                                                               .date(gameDto.getDate())
+                                                               .videoName(videoName)
+                                                               .duration(duration)
+                                                               .build()));
+        return searchOptions;
+    }
+
+    private String composeVideoName(GameDto gameDto) {
+        return gameDto.getHomeTeamName() + " " + gameDto.getAwayTeamName() + " highlights";
+    }
+
+    private Video searchForVideo(SearchOptions searchOptions) {
         Properties properties = new Properties();
         try {
             InputStream in = VideoService.class.getResourceAsStream("/" + PROPERTIES_FILENAME);
@@ -76,20 +151,21 @@ public class VideoService {
             //String queryTerm = String.format("%s %s Full Game Highlights",gameDto.getHomeTeamName(), gameDto.getAwayTeamName());
 
             // Define the API request for retrieving search results.
-            YouTube.Search.List search = youtube.search().list("id,snippet").setPublishedAfter(new DateTime(date));
+            YouTube.Search.List search = youtube.search().list("id,snippet").setPublishedAfter(
+                    new DateTime(searchOptions.getDate()));
 
             // Set your developer key from the {{ Google Cloud Console }} for
             // non-authenticated requests. See:
             // {{ https://cloud.google.com/console }}
             String apiKey = properties.getProperty("youtube.apikey");
             search.setKey(apiKey);
-            search.setQ(searchContent);
+            search.setQ(searchOptions.getVideoName());
 
             // Restrict the search results to only include videos. See:
             // https://developers.google.com/youtube/v3/docs/search/list#type
             search.setType("video");
-            search.setVideoDuration(duration);
-            search.setChannelId(channelId); //UC8ndn9yAGs5L8NqKUBKzfyw
+            search.setVideoDuration(searchOptions.getDuration());
+            search.setChannelId(searchOptions.getChannel()); //UC8ndn9yAGs5L8NqKUBKzfyw
 
             // To increase efficiency, only retrieve the fields that the
             // application uses.
@@ -99,11 +175,13 @@ public class VideoService {
             // Call the API and print results.
             SearchListResponse searchResponse = search.execute();
             List<SearchResult> searchResultList = searchResponse.getItems();
-            if (searchResultList != null) {
+            if (CollectionUtils.isNotEmpty(searchResultList)) {
                 SearchResult searchResult = searchResultList.get(0);
                 return Video.builder()
                         .id(searchResult.getId().getVideoId())
-                        .duration(duration)
+                        .duration(searchOptions.getDuration())
+                        .channel(searchOptions.getChannel())
+                        .name(searchResult.getSnippet().getTitle())
                         .build();
             }
         } catch (GoogleJsonResponseException e) {

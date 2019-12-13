@@ -4,7 +4,6 @@ import com.zlatenov.spoilerfreesportsapi.model.dto.GameDto;
 import com.zlatenov.spoilerfreesportsapi.model.dto.VideosDto;
 import com.zlatenov.videoproviderservice.service.VideoService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +22,6 @@ public class VideoProviderController {
     private ResponseEntity login(GameDto gameDto) {
         VideosDto videosDto = videoService.getVideosForGame(gameDto);
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .build();
+                .ok(videosDto);
     }
 }

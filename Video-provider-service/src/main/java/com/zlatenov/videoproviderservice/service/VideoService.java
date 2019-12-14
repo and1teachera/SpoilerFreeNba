@@ -160,6 +160,7 @@ public class VideoService {
             String apiKey = properties.getProperty("youtube.apikey");
             search.setKey(apiKey);
             search.setQ(searchOptions.getVideoName());
+            search.setVideoEmbeddable("true");
 
             // Restrict the search results to only include videos. See:
             // https://developers.google.com/youtube/v3/docs/search/list#type

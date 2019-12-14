@@ -18,4 +18,6 @@ import lombok.Setter;
 public class Team {
 
     private String name;
+    private String conference;
+    private String division;
 }

@@ -5,6 +5,7 @@ import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIExceptio
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -18,6 +19,8 @@ public interface StandingsService {
     List<StandingsServiceModel> initStandingsData() throws IOException, UnresponsiveAPIException;
 
     void calculateStandings() throws ParseException, UnresponsiveAPIException;
+
+    List<StandingsServiceModel> getStandingsForDate(Date date);
 
     //void fetchStandings() throws IOException, UnresponsiveAPIException;
 }

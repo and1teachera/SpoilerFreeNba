@@ -11,9 +11,12 @@ import com.zlatenov.nbastandingsservice.processor.ExternalAPIContentProcessor;
 import com.zlatenov.nbastandingsservice.repository.StandingsRepository;
 import com.zlatenov.nbastandingsservice.transformer.GamesTransformer;
 import com.zlatenov.nbastandingsservice.transformer.StandingsModelTransformer;
+import com.zlatenov.nbastandingsservice.transformer.TeamsTransformer;
+import com.zlatenov.spoilerfreesportsapi.model.dto.Score;
 import com.zlatenov.spoilerfreesportsapi.model.dto.game.GameDto;
 import com.zlatenov.spoilerfreesportsapi.model.dto.game.GamesDto;
-import com.zlatenov.spoilerfreesportsapi.model.dto.Score;
+import com.zlatenov.spoilerfreesportsapi.model.dto.standings.Record;
+import com.zlatenov.spoilerfreesportsapi.model.dto.standings.Streak;
 import com.zlatenov.spoilerfreesportsapi.model.dto.team.TeamDto;
 import com.zlatenov.spoilerfreesportsapi.model.dto.team.TeamsDto;
 import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
@@ -23,23 +26,22 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import org.apache.commons.collections4.CollectionUtils;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import static com.zlatenov.spoilerfreesportsapi.util.DateUtil.getCurrentDateWithoutTime;
 import static java.util.stream.Collectors.groupingBy;
 
 /**
@@ -57,6 +59,12 @@ public class StandingsServiceImpl implements StandingsService {
     private final StandingsModelTransformer standingsModelTransformer;
     private final StandingsRepository standingsRepository;
     private final GamesTransformer gamesTransformer;
+    private final TeamsTransformer teamsTransformer;
+
+    private final ModelMapper modelMapper;
+
+
+
 
     @Override
     public void initializeDatabase() throws IOException, UnresponsiveAPIException {
@@ -112,45 +120,130 @@ public class StandingsServiceImpl implements StandingsService {
                 forEach(standingsResponseModel -> standingsResponseModel.setName(
                         teamIdsMap.get(standingsResponseModel.getTeamId()).get(0).getFullName()));
 
-        return standingsModelTransformer.transformResponseToTeamServiceModels(standingsResponseModels);
+        List<StandingsServiceModel> standingsServiceModels = standingsModelTransformer.transformResponseToTeamServiceModels(
+                standingsResponseModels);
+        standingsServiceModels.forEach(standingsServiceModel -> standingsServiceModel.setDate(getCurrentDateWithoutTime()));
+        return standingsServiceModels;
     }
 
     @Override
-    public void calculateStandings() throws ParseException, UnresponsiveAPIException {
+    public void calculateStandings() throws UnresponsiveAPIException {
         List<TeamDto> teamDtos = fetchTeamsFromExternalApi();
         List<GameDto> gameDtos = fetchGamesFromExternalApi();
 
-        Map<Date, List<Game>> dateListMap = sortGamesByDate(gamesTransformer.transformToGame(gameDtos));
-        List<String> teamNames = teamDtos.stream().map(TeamDto::getFullName).collect(Collectors.toList());
-//        Map<String, List<Standings>> teamStandings = new HashMap<>();
-//        for (String teamName : teamNames) {
-//            teamStandings.put(teamName, new ArrayList<>());
-//        }
+        List<Team> teams = teamsTransformer.transformDtoListToTeams(teamDtos);
+        List<Game> games = gamesTransformer.transformDtoListToGames(gameDtos, teams);
 
-        List<Standings> standings = new ArrayList<>();
+        Map<Date, List<Game>> dateListMap = sortGamesByDate(games);
+        List<StandingsServiceModel> standingsServiceModelList = new ArrayList<>();
 
-        Map<Date, Map<String, Standings>> standingsMap = new HashMap<>();
+        List<StandingsServiceModel> currentTeamStanding = createInitialStandingsForTeams(teams);
 
-        for (Map.Entry<Date, List<Game>> dateListEntry : dateListMap.entrySet()) {
-            List<Game> gamesOnDate = dateListEntry.getValue();
-            Date date = dateListEntry.getKey();
-            standings.addAll(gamesOnDate.stream()
-                    .flatMap(game -> createStandingsForTeams(standings, game).stream())
-                    .collect(Collectors.toList()));
+        dateListMap.keySet()
+                .forEach(date -> standingsServiceModelList.addAll(
+                        simulateStandingsForDate(date, currentTeamStanding, dateListMap.get(date))));
 
-            //
-//            for (String teamName : teamNames) {
-//                calculateTeamStandings(gamesOnDate, teamStandings.get(teamName));
-//                Map<String, Standings> teamStandingsForDay = new HashMap<>();
-//                teamStandingsForDay.put(teamName, teamStandings.get(teamName).get(teamStandings.get(teamName).size() - 1));
-//                standingsMap.put(date, teamStandingsForDay);
-//            }
+    }
+
+    @Override
+    public List<StandingsServiceModel> getStandingsForDate(Date date) {
+        return standingsModelTransformer.transformEntitiesToStandingsServiceModels(
+                standingsRepository.findByDate(date));
+    }
+
+    private List<StandingsServiceModel> simulateStandingsForDate(Date date,
+            List<StandingsServiceModel> currentTeamStanding, List<Game> games) {
+        List<StandingsServiceModel> standingsServiceModels = remapStandingsServiceModelsToNextDay(currentTeamStanding,
+                                                                                                  date);
+        games.forEach(game -> changeStandingsDateAfterGame(game, standingsServiceModels));
+        currentTeamStanding = standingsServiceModels;
+        return standingsServiceModels;
+    }
+
+    private void changeStandingsDateAfterGame(Game game, List<StandingsServiceModel> standingsServiceModels) {
+        Team winner = game.getWinner();
+        Team looser = game.getLooser();
+        boolean isSameConferenceTeamsGame = game.isSameConferenceTeamsGame();
+        boolean isSameDivisionsTeamsGame = game.isSameDivisionTeamsGame();
+        standingsServiceModels.stream()
+                .filter(standingsServiceModel -> standingsServiceModel.getTeam()
+                        .getName()
+                        .equalsIgnoreCase(winner.getName()))
+                .findFirst()
+                .ifPresent(standingsServiceModel -> changeRecordOfWinner(standingsServiceModel,
+                                                                         isSameConferenceTeamsGame,
+                                                                         isSameDivisionsTeamsGame));
+        standingsServiceModels.stream()
+                .filter(standingsServiceModel -> standingsServiceModel.getTeam()
+                        .getName()
+                        .equalsIgnoreCase(looser.getName()))
+                .findFirst()
+                .ifPresent(standingsServiceModel -> changeRecordOLooser(standingsServiceModel,
+                                                                         isSameConferenceTeamsGame,
+                                                                         isSameDivisionsTeamsGame));
+    }
+
+    private void changeRecordOLooser(StandingsServiceModel standingsServiceModel, boolean isSameConferenceTeamsGame,
+            boolean isSameDivisionsTeamsGame) {
+        Record teamRecord = standingsServiceModel.getTeamRecord();
+        Record conferenceRecord = standingsServiceModel.getConferenceRecord();
+        Record divisionRecord = standingsServiceModel.getDivisionRecord();
+        Streak streak = standingsServiceModel.getStreak();
+        teamRecord.incrementNumberOfLosses();
+        if (isSameConferenceTeamsGame) {
+            conferenceRecord.incrementNumberOfLosses();
+        }
+        if (isSameDivisionsTeamsGame) {
+            divisionRecord.incrementNumberOfLosses();
         }
 
+        streak.clearWinningStreak();
+        streak.recalculatePct(teamRecord);
+    }
 
 
+    private void changeRecordOfWinner(StandingsServiceModel standingsServiceModel, boolean isSameConferenceTeamsGame,
+            boolean isSameDivisionsTeamsGame) {
+        Record teamRecord = standingsServiceModel.getTeamRecord();
+        Record conferenceRecord = standingsServiceModel.getConferenceRecord();
+        Record divisionRecord = standingsServiceModel.getDivisionRecord();
+        Streak streak = standingsServiceModel.getStreak();
+        teamRecord.incrementNumberOfWins();
+        if (isSameConferenceTeamsGame) {
+            conferenceRecord.incrementNumberOfWins();
+        }
+        if (isSameDivisionsTeamsGame) {
+            divisionRecord.incrementNumberOfWins();
+        }
 
-        System.out.println(" ");
+        streak.incrementWinningStreak();
+        streak.recalculatePct(teamRecord);
+    }
+
+    private List<StandingsServiceModel> remapStandingsServiceModelsToNextDay(
+            List<StandingsServiceModel> currentTeamStanding, Date date) {
+        return currentTeamStanding.stream()
+                .map(standingsServiceModel -> remapStandingsServiceModelToNextDay(standingsServiceModel, date))
+                .collect(Collectors.toList());
+    }
+
+    private StandingsServiceModel remapStandingsServiceModelToNextDay(StandingsServiceModel currentTeamStanding, Date date) {
+        StandingsServiceModel standingsServiceModel = new StandingsServiceModel();
+        modelMapper.map(currentTeamStanding, standingsServiceModel);
+        standingsServiceModel.setDate(date);
+        return standingsServiceModel;
+    }
+
+    private List<StandingsServiceModel> createInitialStandingsForTeams(List<Team> teams) {
+        return teams.stream()
+                .map(team -> StandingsServiceModel.builder()
+                        .team(team)
+                        .teamRecord(Record.createEmptyRecord())
+                        .conferenceRecord(Record.createEmptyRecord())
+                        .divisionRecord(Record.createEmptyRecord())
+                        .streak(Streak.createEmptyStreak())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     private List<TeamResponseModel> fetchTeamNamesFromExternalAPI() throws IOException, UnresponsiveAPIException {
@@ -171,63 +264,12 @@ public class StandingsServiceImpl implements StandingsService {
                 .max(Comparator.comparing(Standings::getDate));
     }
 
-    private List<Standings> createStandingsForTeams(List<Standings> standings, Game game) {
-//        game.get
 
-        //boolean areFromSameConference = homeTeam.ge
-
-//        List<Standings> homeTeamStandings = standings.stream()
-//                .filter(standing -> standing.getTeamName().equalsIgnoreCase(homeTeam.getFullName()))
-//                .collect(Collectors.toList());
-//
-//        List<Standings> awayTeamStandings = standings.stream()
-//                .filter(standing -> standing.getTeamName().equalsIgnoreCase(awayTeam.getFullName()))
-//                .collect(Collectors.toList());
-//
-//        String winnersName = determineWinnersName(game);
-//        if (homeTeam.getFullName().equalsIgnoreCase(winnersName)){
-//            Optional<Standings> lastStanding = getLastStanding(winnersName, standings);
-//            if (lastStanding.isPresent()) {
-//
-//            }
-//        }
-        return null;
-    }
-
-    private void calculateTeamStandings(List<Game> gamesOnDate, List<Standings> standings)
-            throws ParseException {
-        Standings lastStanding = standings.get(standings.size() - 1);
-        String teamName = lastStanding.getTeamName();
-        Optional<Game> gameForTeam = gamesOnDate.stream()
-                .filter(game -> game.getHomeTeam().getName().equalsIgnoreCase(teamName)
-                        || game.getAwayTeam().getName().equalsIgnoreCase(teamName))
-                .findFirst();
-        if(gameForTeam.isPresent()) {
-            Game game = gameForTeam.get();
-            String winnersName = determineWinnersName(game);
-        }
-        else {
-            standings.add(Standings.builder().teamName(teamName).date(gamesOnDate.get(0).getDate())
-                                  .build());
-        }
-    }
-
-    private String determineWinnersName(Game game) {
-        Score score = game.getScore();
-        Team homeTeam = game.getHomeTeam();
-        Team awayTeam = game.getAwayTeam();
-        if(score.getAwayTeamPoints() > score.getHomeTeamPoints()){
-            return awayTeam.getName();
-        }
-        return homeTeam.getName();
-    }
-
-    private Map<Date, List<Game>> sortGamesByDate(List<Game> games) throws ParseException {
-        Date today = Date.from(Instant.now());
+    private Map<Date, List<Game>> sortGamesByDate(List<Game> games) {
         Map<Date, List<Game>> gamesToDate = new TreeMap<>();
         for (Game game : games) {
             Score score = game.getScore();
-            if (game.getDate().before(today) && (score.getHomeTeamPoints() != null
+            if (game.getDate().before(getCurrentDateWithoutTime()) && (score.getHomeTeamPoints() != null
                             && score.getAwayTeamPoints() != null)) {
                 if(!gamesToDate.containsKey(game.getDate())) {
                     gamesToDate.put(game.getDate(), new ArrayList<>());

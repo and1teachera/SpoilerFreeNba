@@ -1,10 +1,11 @@
 package com.zlatenov.nbastandingsservice.transformer;
 
-import com.zlatenov.nbastandingsservice.model.Record;
+import com.zlatenov.nbastandingsservice.model.entity.Standings;
 import com.zlatenov.nbastandingsservice.model.response.StandingsResponseModel;
 import com.zlatenov.nbastandingsservice.model.service.StandingsServiceModel;
-import com.zlatenov.nbastandingsservice.model.Streak;
-import com.zlatenov.nbastandingsservice.model.entity.Standings;
+import com.zlatenov.nbastandingsservice.model.service.Team;
+import com.zlatenov.spoilerfreesportsapi.model.dto.standings.Record;
+import com.zlatenov.spoilerfreesportsapi.model.dto.standings.Streak;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
@@ -34,9 +35,11 @@ public class StandingsModelTransformer {
     private StandingsServiceModel transformResponseToStandingsServiceModel(
             StandingsResponseModel standingsResponseModel) {
         return StandingsServiceModel.builder()
-                .teamName(standingsResponseModel.getName())
-                .conference(standingsResponseModel.getConference().getName())
-                .division(standingsResponseModel.getDivision().getName())
+                .team(Team.builder()
+                              .name(standingsResponseModel.getName())
+                              .conference(standingsResponseModel.getConference().getName())
+                              .division(standingsResponseModel.getDivision().getName())
+                              .build())
                 .teamRecord(Record.builder()
                                     .win(Short.valueOf(standingsResponseModel.getWin()))
                                     .loss(Short.valueOf(standingsResponseModel.getLoss()))
@@ -65,16 +68,14 @@ public class StandingsModelTransformer {
     }
 
     public List<Standings> transformToStandingsEntities(List<StandingsServiceModel> standingsServiceModels) {
-        return standingsServiceModels.stream()
-                .map(this::transformToStandingsEntity)
-                .collect(Collectors.toList());
+        return standingsServiceModels.stream().map(this::transformToStandingsEntity).collect(Collectors.toList());
     }
 
     public Standings transformToStandingsEntity(StandingsServiceModel standingsServiceModel) {
         return Standings.builder()
-                .conference(standingsServiceModel.getConference())
-                .division(standingsServiceModel.getDivision())
-                .teamName(standingsServiceModel.getTeamName())
+                .conference(standingsServiceModel.getTeam().getConference())
+                .division(standingsServiceModel.getTeam().getDivision())
+                .teamName(standingsServiceModel.getTeam().getName())
                 .wins(standingsServiceModel.getTeamRecord().getWin())
                 .losses(standingsServiceModel.getTeamRecord().getLoss())
                 .conferenceWins(standingsServiceModel.getConferenceRecord().getWin())
@@ -93,9 +94,11 @@ public class StandingsModelTransformer {
 
     public StandingsServiceModel transformEntityToStandingsServiceModel(Standings standings) {
         return StandingsServiceModel.builder()
-                .conference(standings.getConference())
-                .division(standings.getDivision())
-                .teamName(standings.getTeamName())
+                .team(Team.builder()
+                              .name(standings.getTeamName())
+                              .conference(standings.getConference())
+                              .division(standings.getDivision())
+                              .build())
                 .teamRecord(Record.builder().win(standings.getWins()).loss(standings.getLosses()).build())
                 .conferenceRecord(Record.builder()
                                           .win(standings.getConferenceWins())
@@ -104,6 +107,7 @@ public class StandingsModelTransformer {
                 .divisionRecord(
                         Record.builder().win(standings.getDivisionWins()).loss(standings.getDivisionLosses()).build())
                 .streak(standings.getStreak())
+                .date(standings.getDate())
                 .build();
     }
 

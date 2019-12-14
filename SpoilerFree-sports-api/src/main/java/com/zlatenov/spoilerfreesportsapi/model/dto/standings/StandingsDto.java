@@ -1,7 +1,5 @@
-package com.zlatenov.nbastandingsservice.model.service;
+package com.zlatenov.spoilerfreesportsapi.model.dto.standings;
 
-import com.zlatenov.spoilerfreesportsapi.model.dto.standings.Record;
-import com.zlatenov.spoilerfreesportsapi.model.dto.standings.Streak;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,18 +12,18 @@ import java.util.Date;
  * @author Angel Zlatenov
  */
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class StandingsServiceModel {
+public class StandingsDto {
 
-    private Team team;
+    private String teamName;
+    private Short position;
     private Record teamRecord;
-    private Streak streak;
     private Record conferenceRecord;
     private Record divisionRecord;
+    private Streak streak;
     private Date date;
-
 }

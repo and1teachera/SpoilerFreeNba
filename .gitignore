@@ -30,4 +30,5 @@ build/
 ### VS Code ###
 .vscode/
 /Video-provider-service/src/main/resources/client_secret.json
+/Video-provider-service/src/main/resources/channels.json
 /Video-provider-service/src/main/resources/youtube.properties

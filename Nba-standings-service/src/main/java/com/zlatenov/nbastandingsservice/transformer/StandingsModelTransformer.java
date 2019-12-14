@@ -1,8 +1,8 @@
 package com.zlatenov.nbastandingsservice.transformer;
 
 import com.zlatenov.nbastandingsservice.model.Record;
-import com.zlatenov.nbastandingsservice.model.StandingsResponseModel;
-import com.zlatenov.nbastandingsservice.model.StandingsServiceModel;
+import com.zlatenov.nbastandingsservice.model.response.StandingsResponseModel;
+import com.zlatenov.nbastandingsservice.model.service.StandingsServiceModel;
 import com.zlatenov.nbastandingsservice.model.Streak;
 import com.zlatenov.nbastandingsservice.model.entity.Standings;
 import lombok.AllArgsConstructor;
@@ -106,4 +106,5 @@ public class StandingsModelTransformer {
                 .streak(standings.getStreak())
                 .build();
     }
+
 }

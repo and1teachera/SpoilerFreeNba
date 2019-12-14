@@ -27,7 +27,6 @@ public class Game extends BaseEntity {
     private Date endTimeUtc;
     private String arena;
     private String city;
-    private String gameDuration;
 
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "homeTeam_id", nullable = false)

@@ -1,7 +1,7 @@
 package com.zlatenov.teamsinformationservice.service;
 
 import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
-import com.zlatenov.teamsinformationservice.model.TeamServiceModel;
+import com.zlatenov.teamsinformationservice.model.service.TeamServiceModel;
 
 import java.io.IOException;
 import java.util.List;

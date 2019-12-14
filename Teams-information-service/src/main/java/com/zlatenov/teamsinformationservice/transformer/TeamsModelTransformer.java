@@ -1,9 +1,9 @@
 package com.zlatenov.teamsinformationservice.transformer;
 
-import com.zlatenov.spoilerfreesportsapi.model.dto.TeamDto;
-import com.zlatenov.spoilerfreesportsapi.model.dto.TeamsDto;
-import com.zlatenov.teamsinformationservice.model.TeamResponseModel;
-import com.zlatenov.teamsinformationservice.model.TeamServiceModel;
+import com.zlatenov.spoilerfreesportsapi.model.dto.team.TeamDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.team.TeamsDto;
+import com.zlatenov.teamsinformationservice.model.response.TeamResponseModel;
+import com.zlatenov.teamsinformationservice.model.service.TeamServiceModel;
 import com.zlatenov.teamsinformationservice.model.entity.Team;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;

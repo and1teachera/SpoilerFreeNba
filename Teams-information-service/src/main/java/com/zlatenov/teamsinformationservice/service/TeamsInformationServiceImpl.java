@@ -1,9 +1,9 @@
 package com.zlatenov.teamsinformationservice.service;
 
 import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
-import com.zlatenov.teamsinformationservice.model.RapidApiTeamsResponse;
-import com.zlatenov.teamsinformationservice.model.TeamResponseModel;
-import com.zlatenov.teamsinformationservice.model.TeamServiceModel;
+import com.zlatenov.teamsinformationservice.model.response.RapidApiTeamsResponse;
+import com.zlatenov.teamsinformationservice.model.response.TeamResponseModel;
+import com.zlatenov.teamsinformationservice.model.service.TeamServiceModel;
 import com.zlatenov.teamsinformationservice.model.entity.Team;
 import com.zlatenov.teamsinformationservice.processor.ExternalAPIContentProcessor;
 import com.zlatenov.teamsinformationservice.repository.TeamRepository;

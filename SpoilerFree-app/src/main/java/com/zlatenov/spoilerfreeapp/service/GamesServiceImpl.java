@@ -6,14 +6,17 @@ import com.zlatenov.spoilerfreeapp.model.view.GameViewModel;
 import com.zlatenov.spoilerfreeapp.repository.GamesRepository;
 import com.zlatenov.spoilerfreeapp.repository.TeamRepository;
 import com.zlatenov.spoilerfreeapp.transformer.GamesModelTransformer;
-import com.zlatenov.spoilerfreesportsapi.model.dto.GamesDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.game.GamesDto;
+import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -30,20 +33,28 @@ public class GamesServiceImpl implements GameService {
     private final GamesModelTransformer gamesModelTransformer;
 
     @Override
-    public void fetchAllGames() {
-        GamesDto gameInformationDto = webClientBuilder.build()
+    public void fetchAllGames() throws UnresponsiveAPIException {
+        GamesDto gamesDto = webClientBuilder.build()
                 .get()
                 .uri("localhost:8083/games")
                 .retrieve()
                 .bodyToMono(GamesDto.class)
                 .block();
-        saveGamesInformation(gameInformationDto);
+        try {
+            saveGamesInformation(gamesModelTransformer.transformToGamesList(Optional.ofNullable(gamesDto)
+                                                                                    .map(GamesDto::getGameDtos)
+                                                                                    .orElseThrow(
+                                                                                            UnresponsiveAPIException::new)));
+        }
+        catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void saveGamesInformation(GamesDto gameInformationDto) {
-        List<Game> games = gamesModelTransformer.transformToGamesList(gameInformationDto);
-
-        Map<String, List<Team>> teamToFullName = teamRepository.findAll().stream().collect(groupingBy(Team::getFullName));
+    private void saveGamesInformation(List<Game> games) throws ParseException {
+        Map<String, List<Team>> teamToFullName = teamRepository.findAll()
+                .stream()
+                .collect(groupingBy(Team::getFullName));
         List<Game> gamesToPersist = new ArrayList<>();
         for (Game game : games) {
             String homeTeamFullName = game.getHomeTeam().getFullName();

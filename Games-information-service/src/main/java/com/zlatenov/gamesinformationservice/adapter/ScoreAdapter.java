@@ -4,7 +4,7 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-import com.zlatenov.gamesinformationservice.model.Score;
+import com.zlatenov.gamesinformationservice.model.response.ScoreResponseModel;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
@@ -13,10 +13,10 @@ import java.io.IOException;
  * @author Angel Zlatenov
  */
 
-public class ScoreAdapter extends TypeAdapter<Score> {
+public class ScoreAdapter extends TypeAdapter<ScoreResponseModel> {
 
     @Override
-    public void write(JsonWriter out, Score value) throws IOException {
+    public void write(JsonWriter out, ScoreResponseModel value) throws IOException {
         if (value == null) {
             out.nullValue();
             return;
@@ -25,10 +25,10 @@ public class ScoreAdapter extends TypeAdapter<Score> {
     }
 
     @Override
-    public Score read(JsonReader reader) throws IOException {
+    public ScoreResponseModel read(JsonReader reader) throws IOException {
         reader.beginObject();
         String fieldName = null;
-        Score score = null;
+        ScoreResponseModel score = null;
         while (reader.hasNext()) {
             JsonToken token = reader.peek();
 
@@ -41,7 +41,7 @@ public class ScoreAdapter extends TypeAdapter<Score> {
                 String points = reader.nextString();
                 try {
                     if (!StringUtils.isEmpty(points)) {
-                        score = new Score(Short.valueOf(points));
+                        score = new ScoreResponseModel(Short.valueOf(points));
                     }
                 }
                 catch (NumberFormatException e) {

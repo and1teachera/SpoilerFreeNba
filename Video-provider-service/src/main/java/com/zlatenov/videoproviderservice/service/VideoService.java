@@ -10,13 +10,15 @@ import com.google.api.services.youtube.model.SearchResult;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
-import com.zlatenov.spoilerfreesportsapi.model.dto.GameDto;
-import com.zlatenov.spoilerfreesportsapi.model.dto.VideoDto;
-import com.zlatenov.spoilerfreesportsapi.model.dto.VideosDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.game.GameDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.video.VideoDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.video.VideosDto;
 import com.zlatenov.videoproviderservice.auth.Auth;
 import com.zlatenov.videoproviderservice.model.Channel;
+import com.zlatenov.videoproviderservice.model.Game;
 import com.zlatenov.videoproviderservice.model.SearchOptions;
 import com.zlatenov.videoproviderservice.model.Video;
+import com.zlatenov.videoproviderservice.transformer.ModelTransformer;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -40,6 +43,7 @@ public class VideoService {
 
     private static final String CHANNELS_JSON_FILE_PATH = "/home/angel/IdeaProjects/SpoilerFreeNba/Video-provider-service/src/main/resources/channels.json";
     private Gson gson;
+    private ModelTransformer modelTransformer;
 
     /**
      * Define a global variable that identifies the name of a file that
@@ -61,7 +65,7 @@ public class VideoService {
      *
      * @return
      */
-    public VideosDto getVideosForGame(GameDto gameDto) {
+    public VideosDto getVideosForGame(GameDto gameDtoe) {
         List<Channel> channels;
         try {
             channels = createListOfChannels();
@@ -70,7 +74,13 @@ public class VideoService {
             e.printStackTrace();
             return null;
         }
-        List<SearchOptions> searchOptions = createSearchOptionsForGame(gameDto, channels);
+        List<SearchOptions> searchOptions = null;
+        try {
+            searchOptions = createSearchOptionsForGame(modelTransformer.transformDtoToGame(gameDtoe), channels);
+        }
+        catch (ParseException e) {
+            e.printStackTrace();
+        }
         List<Video> videoList = composeVideoList(searchOptions);
 
         return VideosDto.builder().videoList(transformVideosToDtoList(videoList)).build();
@@ -102,27 +112,27 @@ public class VideoService {
         return gson.fromJson(reader, channelListType);
     }
 
-    private List<SearchOptions> createSearchOptionsForGame(GameDto gameDto, List<Channel> channels) {
+    private List<SearchOptions> createSearchOptionsForGame(Game game, List<Channel> channels) {
         List<SearchOptions> searchOptions = new ArrayList<>();
-        channels.forEach(channel -> searchOptions.addAll(createSearchOptionForGame(channel, gameDto)));
+        channels.forEach(channel -> searchOptions.addAll(createSearchOptionForGame(channel, game)));
         return searchOptions;
     }
 
-    private List<SearchOptions> createSearchOptionForGame(Channel channel, GameDto gameDto) {
+    private List<SearchOptions> createSearchOptionForGame(Channel channel, Game game) {
         List<SearchOptions> searchOptions = new ArrayList<>();
-        String videoName = composeVideoName(gameDto);
+        String videoName = composeVideoName(game);
         channel.getDurations()
                 .forEach(duration -> searchOptions.add(SearchOptions.builder()
                                                                .channel(channel.getId())
-                                                               .date(gameDto.getDate())
+                                                               .date(game.getDate())
                                                                .videoName(videoName)
                                                                .duration(duration)
                                                                .build()));
         return searchOptions;
     }
 
-    private String composeVideoName(GameDto gameDto) {
-        return gameDto.getHomeTeamName() + " " + gameDto.getAwayTeamName() + " highlights";
+    private String composeVideoName(Game game) {
+        return game.getHomeTeamName() + " " + game.getAwayTeamName() + " highlights";
     }
 
     private Video searchForVideo(SearchOptions searchOptions) {

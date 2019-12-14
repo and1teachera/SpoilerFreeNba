@@ -1,14 +1,14 @@
 package com.zlatenov.gamesinformationservice.service;
 
-import com.zlatenov.gamesinformationservice.model.GameResponseModel;
-import com.zlatenov.gamesinformationservice.model.GameServiceModel;
-import com.zlatenov.gamesinformationservice.model.RapidApiGamesResponse;
+import com.zlatenov.gamesinformationservice.model.response.GameResponseModel;
+import com.zlatenov.gamesinformationservice.model.service.GameServiceModel;
+import com.zlatenov.gamesinformationservice.model.response.RapidApiGamesResponse;
 import com.zlatenov.gamesinformationservice.model.entity.Game;
 import com.zlatenov.gamesinformationservice.processor.ExternalAPIContentProcessor;
 import com.zlatenov.gamesinformationservice.repository.GameRepository;
 import com.zlatenov.gamesinformationservice.transformer.GamesModelTransformer;
-import com.zlatenov.spoilerfreesportsapi.model.dto.TeamDto;
-import com.zlatenov.spoilerfreesportsapi.model.dto.TeamsDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.team.TeamDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.team.TeamsDto;
 import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
 import lombok.AllArgsConstructor;
 import okhttp3.OkHttpClient;
@@ -111,14 +111,14 @@ public class GamesInformationServiceImpl implements GamesInformationService {
         saveGames(gameServiceModels, teamNames);
     }
 
-    private List<TeamDto> fetchTeams() {
+    private List<TeamDto> fetchTeams() throws UnresponsiveAPIException {
         TeamsDto teamsDto = webClientBuilder.build()
                 .get()
                 .uri("localhost:8087/teams")
                 .retrieve()
                 .bodyToMono(TeamsDto.class)
                 .block();
-        return teamsDto.getTeamDtos();
+        return Optional.ofNullable(teamsDto).map(TeamsDto::getTeamDtos).orElseThrow(UnresponsiveAPIException::new);
     }
 
     private void saveGames(List<GameServiceModel> gameServiceModels, List<String> teamNames) {

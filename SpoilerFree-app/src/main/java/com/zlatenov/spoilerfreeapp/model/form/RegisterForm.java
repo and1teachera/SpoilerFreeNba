@@ -1,6 +1,6 @@
 package com.zlatenov.spoilerfreeapp.model.form;
 
-import com.zlatenov.spoilerfreesportsapi.model.dto.RegisterUserDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.user.RegisterUserDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

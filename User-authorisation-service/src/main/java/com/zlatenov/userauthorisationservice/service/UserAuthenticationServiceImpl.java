@@ -1,9 +1,9 @@
 package com.zlatenov.userauthorisationservice.service;
 
 import com.zlatenov.spoilerfreesportsapi.enums.Role;
-import com.zlatenov.spoilerfreesportsapi.model.dto.AuthenticateUserDto;
-import com.zlatenov.spoilerfreesportsapi.model.dto.LoggedUserDto;
-import com.zlatenov.spoilerfreesportsapi.model.dto.RegisterUserDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.user.UserDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.user.LoggedUserDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.user.RegisterUserDto;
 import com.zlatenov.spoilerfreesportsapi.model.exception.AuthorisationException;
 import com.zlatenov.spoilerfreesportsapi.model.exception.CannotRegisterUserException;
 import com.zlatenov.userauthorisationservice.model.UserEntity;
@@ -26,7 +26,7 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
     private static final String EMAIL_REGEX = "^(.+)@(.+)$";
 
     @Override
-    public LoggedUserDto logUser(AuthenticateUserDto authenticateUserDto) throws AuthorisationException {
+    public LoggedUserDto logUser(UserDto authenticateUserDto) throws AuthorisationException {
         UserEntity userEntity = Optional.ofNullable(Pattern.matches(EMAIL_REGEX, authenticateUserDto.getUsername()) ?
                                                             userRepository.findByEmailAndPassword(
                                                                     authenticateUserDto.getUsername(),

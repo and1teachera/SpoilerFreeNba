@@ -1,6 +1,6 @@
 package com.zlatenov.gamesinformationservice.service;
 
-import com.zlatenov.gamesinformationservice.model.GameServiceModel;
+import com.zlatenov.gamesinformationservice.model.service.GameServiceModel;
 import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
 
 import java.io.IOException;

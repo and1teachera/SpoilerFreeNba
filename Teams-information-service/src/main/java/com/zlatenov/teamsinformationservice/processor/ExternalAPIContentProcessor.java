@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 import com.zlatenov.teamsinformationservice.adapter.LeaguesAdapter;
-import com.zlatenov.teamsinformationservice.model.Leagues;
-import com.zlatenov.teamsinformationservice.model.RapidApiTeamsResponse;
+import com.zlatenov.teamsinformationservice.model.response.Leagues;
+import com.zlatenov.teamsinformationservice.model.response.RapidApiTeamsResponse;
 import okhttp3.ResponseBody;
 import org.springframework.stereotype.Component;
 

@@ -1,12 +1,13 @@
 package com.zlatenov.gamesinformationservice.transformer;
 
-import com.zlatenov.gamesinformationservice.model.GameResponseModel;
-import com.zlatenov.gamesinformationservice.model.GameServiceModel;
-import com.zlatenov.gamesinformationservice.model.Score;
+import com.zlatenov.gamesinformationservice.model.response.GameResponseModel;
+import com.zlatenov.gamesinformationservice.model.response.ScoreResponseModel;
+import com.zlatenov.gamesinformationservice.model.service.GameServiceModel;
 import com.zlatenov.gamesinformationservice.model.entity.Game;
-import com.zlatenov.spoilerfreesportsapi.model.dto.GameInformationDto;
-import com.zlatenov.spoilerfreesportsapi.model.dto.GamesDto;
-import com.zlatenov.spoilerfreesportsapi.model.dto.TeamScoreDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.game.GameDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.game.GameInformationDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.game.GamesDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.Score;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
@@ -31,22 +32,24 @@ public class GamesModelTransformer {
     private final ModelMapper modelMapper;
 
     private GameServiceModel transformResponseModelToGameServiceModel(GameResponseModel gameResponseModel) {
-        GameServiceModel gameServiceModel = GameServiceModel.builder()
+        return GameServiceModel.builder()
                 .startTime(ZonedDateTime.parse(gameResponseModel.getStartTimeUTC()))
                 .endTime(StringUtils.isNotEmpty(gameResponseModel.getEndTimeUTC()) ?
                                  ZonedDateTime.parse(gameResponseModel.getEndTimeUTC()) :
                                  null)
                 .homeTeamFullName(gameResponseModel.getHTeam().getFullName())
                 .awayTeamFullName(gameResponseModel.getVTeam().getFullName())
-                .homeTeamScore(
-                        Optional.ofNullable(gameResponseModel.getHTeam().getScore()).map(Score::getPoints).orElse(null))
-                .awayTeamScore(
-                        Optional.ofNullable(gameResponseModel.getVTeam().getScore()).map(Score::getPoints).orElse(null))
+                .score(Score.builder()
+                               .homeTeamPoints(Optional.ofNullable(gameResponseModel.getHTeam().getScore())
+                                                       .map(ScoreResponseModel::getPoints)
+                                                       .orElse(null))
+                               .awayTeamPoints(Optional.ofNullable(gameResponseModel.getVTeam().getScore())
+                                                       .map(ScoreResponseModel::getPoints)
+                                                       .orElse(null))
+                               .build())
+                .arena(gameResponseModel.getArena())
+                .city(gameResponseModel.getCity())
                 .build();
-
-        modelMapper.map(gameResponseModel, gameServiceModel);
-
-        return gameServiceModel;
     }
 
     public List<GameServiceModel> transformResponseToGameServiceModels(List<GameResponseModel> gamesResponseModels) {
@@ -56,45 +59,42 @@ public class GamesModelTransformer {
     }
 
     public GamesDto transformToGamesDto(List<GameServiceModel> gameServiceModels) {
-        List<GameInformationDto> gameInformationDtos = gameServiceModels.stream()
-                .map(this::transformToGameInformationDto)
+        List<GameDto> gameInformationDtos = gameServiceModels.stream()
+                .map(this::transformToGameDto)
                 .collect(Collectors.toList());
-        return new GamesDto(gameInformationDtos);
+        return GamesDto.builder().gameDtos(gameInformationDtos).build();
     }
 
-    private GameInformationDto transformToGameInformationDto(GameServiceModel gameServiceModel) {
-        return GameInformationDto.builder()
-                .arena(gameServiceModel.getArena())
-                .startTime(gameServiceModel.getStartTime().toString())
-                .endTime(gameServiceModel.getEndTime() != null ? gameServiceModel.getEndTime().toString() : null)
-                .homeTeam(TeamScoreDto.builder()
-                                  .fullName(gameServiceModel.getHomeTeamFullName())
-                                  .points(gameServiceModel.getHomeTeamScore())
-                                  .build())
-                .awayTeam(TeamScoreDto.builder()
-                                  .fullName(gameServiceModel.getAwayTeamFullName())
-                                  .points(gameServiceModel.getAwayTeamScore())
-                                  .build())
+    private GameDto transformToGameDto(GameServiceModel gameServiceModel) {
+        return GameDto.builder()
+                .homeTeamName(gameServiceModel.getHomeTeamFullName())
+                .awayTeamName(gameServiceModel.getAwayTeamFullName())
+                .date(gameServiceModel.getStartTime().toString())
+                .gameInformationDto(GameInformationDto.builder()
+                                            .arena(gameServiceModel.getArena())
+                                            .city(gameServiceModel.getCity())
+                                            .score(gameServiceModel.getScore())
+                                            .startTime(gameServiceModel.getStartTime().toString())
+                                            .endTime(Optional.ofNullable(gameServiceModel.getEndTime())
+                                                             .map(ZonedDateTime::toString)
+                                                             .orElse(null))
+                                            .build())
                 .build();
     }
 
     public List<Game> transformToGameEntities(List<GameServiceModel> gameServiceModels) {
-        return gameServiceModels.stream()
-                .map(this::transformToGameEntity)
-                .collect(Collectors.toList());
+        return gameServiceModels.stream().map(this::transformToGameEntity).collect(Collectors.toList());
     }
 
     private Game transformToGameEntity(GameServiceModel gameServiceModel) {
         Game gameEntity = new Game();
         modelMapper.map(gameServiceModel, gameEntity);
-//        teamsModelTransformer.transformToTeamEntity(gameServiceModel.getHomeTeamServiceModel())
+        //        teamsModelTransformer.transformToTeamEntity(gameServiceModel.getHomeTeamServiceModel())
         gameEntity.setHomeTeam(gameServiceModel.getHomeTeamFullName());
         gameEntity.setAwayTeam(gameServiceModel.getAwayTeamFullName());
         gameEntity.setStartTimeUtc(Date.from(
-                gameServiceModel.getStartTime()
-                        .withZoneSameInstant(ZoneId.of(ZoneOffset.UTC.getId()))
-                        .toInstant()));
-        if(gameServiceModel.getEndTime() != null) {
+                gameServiceModel.getStartTime().withZoneSameInstant(ZoneId.of(ZoneOffset.UTC.getId())).toInstant()));
+        if (gameServiceModel.getEndTime() != null) {
             gameEntity.setEndTimeUtc(Date.from(
                     gameServiceModel.getEndTime().withZoneSameInstant(ZoneId.of(ZoneOffset.UTC.getId())).toInstant()));
         }
@@ -102,16 +102,14 @@ public class GamesModelTransformer {
     }
 
     public List<GameServiceModel> transformEntitiesToGameServiceModels(List<Game> gameEntities) {
-        return gameEntities.stream()
-                .map(this::transformEntityToGameServiceModel)
-                .collect(Collectors.toList());
+        return gameEntities.stream().map(this::transformEntityToGameServiceModel).collect(Collectors.toList());
     }
 
     private GameServiceModel transformEntityToGameServiceModel(Game gameEntity) {
         GameServiceModel gameServiceModel = new GameServiceModel();
         modelMapper.map(gameEntity, gameServiceModel);
-        gameServiceModel.setStartTime(ZonedDateTime.ofInstant(gameEntity.getStartTimeUtc().toInstant(),
-                                                              ZoneId.of(ZoneOffset.UTC.getId())));
+        gameServiceModel.setStartTime(
+                ZonedDateTime.ofInstant(gameEntity.getStartTimeUtc().toInstant(), ZoneId.of(ZoneOffset.UTC.getId())));
         if (!Objects.equals(gameEntity.getEndTimeUtc(), null)) {
             gameServiceModel.setEndTime(
                     ZonedDateTime.ofInstant(gameEntity.getEndTimeUtc().toInstant(), ZoneId.of(ZoneOffset.UTC.getId())));

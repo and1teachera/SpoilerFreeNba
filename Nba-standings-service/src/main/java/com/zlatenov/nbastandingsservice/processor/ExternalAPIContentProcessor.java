@@ -2,8 +2,8 @@ package com.zlatenov.nbastandingsservice.processor;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
-import com.zlatenov.nbastandingsservice.model.RapidApiStandingsResponse;
-import com.zlatenov.nbastandingsservice.model.TeamResponseModel;
+import com.zlatenov.nbastandingsservice.model.response.RapidApiStandingsResponse;
+import com.zlatenov.nbastandingsservice.model.response.TeamResponseModel;
 import lombok.AllArgsConstructor;
 import okhttp3.ResponseBody;
 import org.springframework.stereotype.Component;

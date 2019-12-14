@@ -4,8 +4,8 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-import com.zlatenov.teamsinformationservice.model.League;
-import com.zlatenov.teamsinformationservice.model.Leagues;
+import com.zlatenov.teamsinformationservice.model.response.League;
+import com.zlatenov.teamsinformationservice.model.response.Leagues;
 
 import java.io.IOException;
 import java.util.ArrayList;

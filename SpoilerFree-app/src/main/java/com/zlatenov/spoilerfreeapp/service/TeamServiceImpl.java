@@ -4,7 +4,7 @@ import com.zlatenov.spoilerfreeapp.model.entity.Team;
 import com.zlatenov.spoilerfreeapp.model.view.TeamViewModel;
 import com.zlatenov.spoilerfreeapp.repository.TeamRepository;
 import com.zlatenov.spoilerfreeapp.transformer.TeamModelTransformer;
-import com.zlatenov.spoilerfreesportsapi.model.dto.TeamsDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.team.TeamsDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;

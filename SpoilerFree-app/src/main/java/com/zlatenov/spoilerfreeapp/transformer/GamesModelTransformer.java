@@ -3,15 +3,16 @@ package com.zlatenov.spoilerfreeapp.transformer;
 import com.zlatenov.spoilerfreeapp.model.entity.Game;
 import com.zlatenov.spoilerfreeapp.model.entity.Team;
 import com.zlatenov.spoilerfreeapp.model.view.GameViewModel;
-import com.zlatenov.spoilerfreesportsapi.model.dto.GameInformationDto;
-import com.zlatenov.spoilerfreesportsapi.model.dto.GamesDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.Score;
+import com.zlatenov.spoilerfreesportsapi.model.dto.game.GameDto;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 /**
  * @author Angel Zlatenov
@@ -25,30 +26,29 @@ public class GamesModelTransformer {
         return Collections.singletonList(new GameViewModel());
     }
 
-    public List<Game> transformToGamesList(GamesDto gamesDto)  {
-        return gamesDto.getGameInformationDtos().stream()
-                .map(gameInformationDto -> {
-                    try {
-                        return transformToGame(gameInformationDto);
-                    }
-                    catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    return new Game();
-                })
-                .collect(Collectors.toList());
+    public List<Game> transformToGamesList(List<GameDto> gamesDto) throws ParseException {
+        List<Game> games = new ArrayList<>();
+        for (GameDto gameDto : gamesDto) {
+            games.add(transformToGame(gameDto));
+        }
+        return games;
     }
 
-    private Game transformToGame(GameInformationDto gameInformationDto) throws ParseException {
-        return Game.builder().arena(gameInformationDto.getArena())
-                .startTimeUtc(simpleDateFormat.parse(gameInformationDto.getStartTime()))
-                .endTimeUtc(gameInformationDto.getEndTime() != null ?
-                                    simpleDateFormat.parse(gameInformationDto.getEndTime())
-                                    : null)
-                .homeTeam(Team.builder().fullName(gameInformationDto.getHomeTeam().getFullName()).build())
-                .homeTeamScore(gameInformationDto.getHomeTeam().getPoints())
-                .awayTeam(Team.builder().fullName(gameInformationDto.getAwayTeam().getFullName()).build())
-                .awayTeamScore(gameInformationDto.getAwayTeam().getPoints())
+    private Game transformToGame(GameDto gameDto) throws ParseException {
+        return Game.builder()
+                .arena(gameDto.getGameInformationDto().getArena())
+                .startTimeUtc(simpleDateFormat.parse(gameDto.getGameInformationDto().getStartTime()))
+                .endTimeUtc(gameDto.getGameInformationDto().getEndTime() != null ?
+                                    simpleDateFormat.parse(gameDto.getGameInformationDto().getEndTime()) :
+                                    null)
+                .homeTeam(Team.builder().fullName(gameDto.getHomeTeamName()).build())
+                .homeTeamScore(Optional.ofNullable(gameDto.getGameInformationDto().getScore())
+                                       .map(Score::getHomeTeamPoints)
+                                       .orElse(null))
+                .awayTeam(Team.builder().fullName(gameDto.getAwayTeamName()).build())
+                .awayTeamScore(Optional.ofNullable(gameDto.getGameInformationDto().getScore())
+                                       .map(Score::getAwayTeamPoints)
+                                       .orElse(null))
                 .build();
     }
 

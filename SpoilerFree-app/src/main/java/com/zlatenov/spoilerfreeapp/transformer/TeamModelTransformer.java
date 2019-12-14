@@ -1,8 +1,8 @@
 package com.zlatenov.spoilerfreeapp.transformer;
 
 import com.zlatenov.spoilerfreeapp.model.entity.Team;
-import com.zlatenov.spoilerfreesportsapi.model.dto.TeamDto;
-import com.zlatenov.spoilerfreesportsapi.model.dto.TeamsDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.team.TeamDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.team.TeamsDto;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;

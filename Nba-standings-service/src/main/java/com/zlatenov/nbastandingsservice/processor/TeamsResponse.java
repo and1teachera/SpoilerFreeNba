@@ -1,6 +1,6 @@
 package com.zlatenov.nbastandingsservice.processor;
 
-import com.zlatenov.nbastandingsservice.model.TeamResponseModel;
+import com.zlatenov.nbastandingsservice.model.response.TeamResponseModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

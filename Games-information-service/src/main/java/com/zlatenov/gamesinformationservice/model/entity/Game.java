@@ -22,7 +22,6 @@ public class Game extends BaseEntity {
     private Date endTimeUtc;
     private String arena;
     private String city;
-    private String gameDuration;
     private String homeTeam;
     private String awayTeam;
     private Short homeTeamScore;

@@ -1,9 +1,9 @@
 package com.zlatenov.gamesinformationservice.controller;
 
-import com.zlatenov.gamesinformationservice.model.GameServiceModel;
+import com.zlatenov.gamesinformationservice.model.service.GameServiceModel;
 import com.zlatenov.gamesinformationservice.service.GamesInformationServiceImpl;
 import com.zlatenov.gamesinformationservice.transformer.GamesModelTransformer;
-import com.zlatenov.spoilerfreesportsapi.model.dto.GamesDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.game.GamesDto;
 import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;

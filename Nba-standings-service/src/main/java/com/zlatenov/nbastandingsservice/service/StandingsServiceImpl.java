@@ -1,19 +1,21 @@
 package com.zlatenov.nbastandingsservice.service;
 
-import com.zlatenov.nbastandingsservice.model.RapidApiStandingsResponse;
-import com.zlatenov.nbastandingsservice.model.StandingsResponseModel;
-import com.zlatenov.nbastandingsservice.model.StandingsServiceModel;
-import com.zlatenov.nbastandingsservice.model.TeamResponseModel;
 import com.zlatenov.nbastandingsservice.model.entity.Standings;
+import com.zlatenov.nbastandingsservice.model.response.RapidApiStandingsResponse;
+import com.zlatenov.nbastandingsservice.model.response.StandingsResponseModel;
+import com.zlatenov.nbastandingsservice.model.response.TeamResponseModel;
+import com.zlatenov.nbastandingsservice.model.service.Game;
+import com.zlatenov.nbastandingsservice.model.service.StandingsServiceModel;
+import com.zlatenov.nbastandingsservice.model.service.Team;
 import com.zlatenov.nbastandingsservice.processor.ExternalAPIContentProcessor;
 import com.zlatenov.nbastandingsservice.repository.StandingsRepository;
 import com.zlatenov.nbastandingsservice.transformer.GamesTransformer;
 import com.zlatenov.nbastandingsservice.transformer.StandingsModelTransformer;
-import com.zlatenov.spoilerfreesportsapi.model.dto.GameInformationDto;
-import com.zlatenov.spoilerfreesportsapi.model.dto.GamesDto;
-import com.zlatenov.spoilerfreesportsapi.model.dto.TeamDto;
-import com.zlatenov.spoilerfreesportsapi.model.dto.TeamScoreDto;
-import com.zlatenov.spoilerfreesportsapi.model.dto.TeamsDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.game.GameDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.game.GamesDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.Score;
+import com.zlatenov.spoilerfreesportsapi.model.dto.team.TeamDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.team.TeamsDto;
 import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
 import lombok.AllArgsConstructor;
 import okhttp3.OkHttpClient;
@@ -114,12 +116,11 @@ public class StandingsServiceImpl implements StandingsService {
     }
 
     @Override
-    public void calculateStandings() throws ParseException {
+    public void calculateStandings() throws ParseException, UnresponsiveAPIException {
         List<TeamDto> teamDtos = fetchTeamsFromExternalApi();
-        List<GameInformationDto> gameInformationDtos = fetchGamesFromExternalApi();
+        List<GameDto> gameDtos = fetchGamesFromExternalApi();
 
-
-        Map<Date, List<GameInformationDto>> dateListMap = sortGamesByDate(gameInformationDtos);
+        Map<Date, List<Game>> dateListMap = sortGamesByDate(gamesTransformer.transformToGame(gameDtos));
         List<String> teamNames = teamDtos.stream().map(TeamDto::getFullName).collect(Collectors.toList());
 //        Map<String, List<Standings>> teamStandings = new HashMap<>();
 //        for (String teamName : teamNames) {
@@ -130,8 +131,8 @@ public class StandingsServiceImpl implements StandingsService {
 
         Map<Date, Map<String, Standings>> standingsMap = new HashMap<>();
 
-        for (Map.Entry<Date, List<GameInformationDto>> dateListEntry : dateListMap.entrySet()) {
-            List<GameInformationDto> gamesOnDate = dateListEntry.getValue();
+        for (Map.Entry<Date, List<Game>> dateListEntry : dateListMap.entrySet()) {
+            List<Game> gamesOnDate = dateListEntry.getValue();
             Date date = dateListEntry.getKey();
             standings.addAll(gamesOnDate.stream()
                     .flatMap(game -> createStandingsForTeams(standings, game).stream())
@@ -170,9 +171,8 @@ public class StandingsServiceImpl implements StandingsService {
                 .max(Comparator.comparing(Standings::getDate));
     }
 
-    private List<Standings> createStandingsForTeams(List<Standings> standings, GameInformationDto game) {
-        TeamScoreDto homeTeam = game.getHomeTeam();
-        TeamScoreDto awayTeam = game.getAwayTeam();
+    private List<Standings> createStandingsForTeams(List<Standings> standings, Game game) {
+//        game.get
 
         //boolean areFromSameConference = homeTeam.ge
 
@@ -183,72 +183,72 @@ public class StandingsServiceImpl implements StandingsService {
 //        List<Standings> awayTeamStandings = standings.stream()
 //                .filter(standing -> standing.getTeamName().equalsIgnoreCase(awayTeam.getFullName()))
 //                .collect(Collectors.toList());
-
-        String winnersName = determineWinnersName(game);
-        if (homeTeam.getFullName().equalsIgnoreCase(winnersName)){
-            Optional<Standings> lastStanding = getLastStanding(winnersName, standings);
-            if (lastStanding.isPresent()) {
-
-            }
-        }
+//
+//        String winnersName = determineWinnersName(game);
+//        if (homeTeam.getFullName().equalsIgnoreCase(winnersName)){
+//            Optional<Standings> lastStanding = getLastStanding(winnersName, standings);
+//            if (lastStanding.isPresent()) {
+//
+//            }
+//        }
         return null;
     }
 
-    private void calculateTeamStandings(List<GameInformationDto> gamesOnDate, List<Standings> standings)
+    private void calculateTeamStandings(List<Game> gamesOnDate, List<Standings> standings)
             throws ParseException {
         Standings lastStanding = standings.get(standings.size() - 1);
         String teamName = lastStanding.getTeamName();
-        Optional<GameInformationDto> gameForTeam = gamesOnDate.stream()
-                .filter(gameInformationDto -> gameInformationDto.getHomeTeam().getFullName().equalsIgnoreCase(teamName)
-                        || gameInformationDto.getAwayTeam().getFullName().equalsIgnoreCase(teamName))
+        Optional<Game> gameForTeam = gamesOnDate.stream()
+                .filter(game -> game.getHomeTeam().getName().equalsIgnoreCase(teamName)
+                        || game.getAwayTeam().getName().equalsIgnoreCase(teamName))
                 .findFirst();
         if(gameForTeam.isPresent()) {
-            GameInformationDto gameInformationDto = gameForTeam.get();
-            String winnersName = determineWinnersName(gameInformationDto);
+            Game game = gameForTeam.get();
+            String winnersName = determineWinnersName(game);
         }
         else {
-            standings.add(Standings.builder().teamName(teamName).date(DATE_FORMAT.parse(gamesOnDate.get(0).getStartTime()))
+            standings.add(Standings.builder().teamName(teamName).date(gamesOnDate.get(0).getDate())
                                   .build());
         }
     }
 
-    private String determineWinnersName(GameInformationDto gameInformationDto) {
-        TeamScoreDto awayTeam = gameInformationDto.getAwayTeam();
-        TeamScoreDto homeTeam = gameInformationDto.getHomeTeam();
-        if(awayTeam.getPoints() > homeTeam.getPoints()){
-            return awayTeam.getFullName();
+    private String determineWinnersName(Game game) {
+        Score score = game.getScore();
+        Team homeTeam = game.getHomeTeam();
+        Team awayTeam = game.getAwayTeam();
+        if(score.getAwayTeamPoints() > score.getHomeTeamPoints()){
+            return awayTeam.getName();
         }
-        return homeTeam.getFullName();
+        return homeTeam.getName();
     }
 
-    private Map<Date, List<GameInformationDto>> sortGamesByDate(List<GameInformationDto> gameInformationDtos) throws ParseException {
+    private Map<Date, List<Game>> sortGamesByDate(List<Game> games) throws ParseException {
         Date today = Date.from(Instant.now());
-        Map<Date, List<GameInformationDto>> gamesToDate = new TreeMap<>();
-        for (GameInformationDto gameInformationDto : gameInformationDtos) {
-            Date gameStartDate = DATE_FORMAT.parse(gameInformationDto.getStartTime());
-            if (gameStartDate.before(today) && (gameInformationDto.getHomeTeam().getPoints() != null
-                            && gameInformationDto.getAwayTeam().getPoints() != null)) {
-                if(!gamesToDate.containsKey(gameStartDate)) {
-                    gamesToDate.put(gameStartDate, new ArrayList<>());
+        Map<Date, List<Game>> gamesToDate = new TreeMap<>();
+        for (Game game : games) {
+            Score score = game.getScore();
+            if (game.getDate().before(today) && (score.getHomeTeamPoints() != null
+                            && score.getAwayTeamPoints() != null)) {
+                if(!gamesToDate.containsKey(game.getDate())) {
+                    gamesToDate.put(game.getDate(), new ArrayList<>());
                 }
-                gamesToDate.get(gameStartDate).add(gameInformationDto);
+                gamesToDate.get(game.getDate()).add(game);
             }
         }
         return gamesToDate;
     }
 
-    private List<GameInformationDto> fetchGamesFromExternalApi() {
+    private List<GameDto> fetchGamesFromExternalApi() throws UnresponsiveAPIException {
         GamesDto gamesDto = webClientBuilder.build()
                 .get()
                 .uri("localhost:8083/games")
                 .retrieve()
                 .bodyToMono(GamesDto.class)
                 .block();
-
-        return gamesDto.getGameInformationDtos();
+        return Optional.ofNullable(gamesDto).map(GamesDto::getGameDtos).orElseThrow(UnresponsiveAPIException::new);
     }
 
-    private List<TeamDto> fetchTeamsFromExternalApi() {
+    private List<TeamDto> fetchTeamsFromExternalApi() throws UnresponsiveAPIException {
         TeamsDto teamsDto = webClientBuilder.build()
                 .get()
                 .uri("localhost:8087/teams")
@@ -256,6 +256,6 @@ public class StandingsServiceImpl implements StandingsService {
                 .bodyToMono(TeamsDto.class)
                 .block();
 
-        return teamsDto.getTeamDtos();
+        return Optional.ofNullable(teamsDto).map(TeamsDto::getTeamDtos).orElseThrow(UnresponsiveAPIException::new);
     }
 }

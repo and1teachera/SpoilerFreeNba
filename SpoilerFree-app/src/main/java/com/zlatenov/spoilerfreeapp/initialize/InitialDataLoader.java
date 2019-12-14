@@ -2,6 +2,7 @@ package com.zlatenov.spoilerfreeapp.initialize;
 
 import com.zlatenov.spoilerfreeapp.service.GameService;
 import com.zlatenov.spoilerfreeapp.service.TeamService;
+import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -20,6 +21,11 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         teamsService.fetchAllTeams();
-        gamesService.fetchAllGames();
+        try {
+            gamesService.fetchAllGames();
+        }
+        catch (UnresponsiveAPIException e) {
+            e.printStackTrace();
+        }
     }
 }

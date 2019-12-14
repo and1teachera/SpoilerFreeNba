@@ -3,9 +3,9 @@ package com.zlatenov.spoilerfreeapp.service;
 import com.zlatenov.spoilerfreeapp.model.form.LoginForm;
 import com.zlatenov.spoilerfreeapp.model.form.RegisterForm;
 import com.zlatenov.spoilerfreesportsapi.enums.Role;
-import com.zlatenov.spoilerfreesportsapi.model.dto.AuthenticateUserDto;
-import com.zlatenov.spoilerfreesportsapi.model.dto.LoggedUserDto;
-import com.zlatenov.spoilerfreesportsapi.model.dto.RegisterUserDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.user.UserDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.user.LoggedUserDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.user.RegisterUserDto;
 import com.zlatenov.spoilerfreesportsapi.model.exception.AuthorisationException;
 import lombok.AllArgsConstructor;
 import org.apache.tomcat.websocket.AuthenticationException;
@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void logUser(LoginForm loginForm) throws AuthorisationException {
-        AuthenticateUserDto authenticateUserDto = AuthenticateUserDto.builder()
+        UserDto authenticateUserDto = UserDto.builder()
                 .username(loginForm.getUsername())
                 .password(loginForm.getPassword())
                 .build();
@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
         LoggedUserDto loggedUserDto = webClientBuilder.build()
                 .post()
                 .uri("localhost:8081/login")
-                .body(Mono.just(authenticateUserDto), AuthenticateUserDto.class)
+                .body(Mono.just(authenticateUserDto), UserDto.class)
                 .retrieve()
                 .onStatus(HttpStatus::is4xxClientError,
                           clientResponse -> clientResponse

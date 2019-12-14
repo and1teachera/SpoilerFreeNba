@@ -1,8 +1,8 @@
 package com.zlatenov.userauthorisationservice.service;
 
-import com.zlatenov.spoilerfreesportsapi.model.dto.AuthenticateUserDto;
-import com.zlatenov.spoilerfreesportsapi.model.dto.LoggedUserDto;
-import com.zlatenov.spoilerfreesportsapi.model.dto.RegisterUserDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.user.UserDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.user.LoggedUserDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.user.RegisterUserDto;
 import com.zlatenov.spoilerfreesportsapi.model.exception.AuthorisationException;
 import com.zlatenov.spoilerfreesportsapi.model.exception.CannotRegisterUserException;
 
@@ -12,7 +12,7 @@ import com.zlatenov.spoilerfreesportsapi.model.exception.CannotRegisterUserExcep
 
 public interface UserAuthenticationService {
 
-    LoggedUserDto logUser(AuthenticateUserDto authenticateUserDto) throws AuthorisationException;
+    LoggedUserDto logUser(UserDto authenticateUserDto) throws AuthorisationException;
 
     LoggedUserDto registerUser(RegisterUserDto registerUserDto) throws CannotRegisterUserException;
 

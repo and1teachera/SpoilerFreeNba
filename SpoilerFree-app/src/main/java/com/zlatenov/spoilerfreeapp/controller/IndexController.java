@@ -19,7 +19,7 @@ public class IndexController extends BaseController {
     @GetMapping({"/index", "/index.html", "/"})
     public ModelAndView index(ModelAndView modelAndView) {
         modelAndView.setViewName("index.html");
-        modelAndView.addObject(gamesService.getAllGames());
+        modelAndView.addObject("games",gamesService.getAllGames());
         return modelAndView;
     }
 }

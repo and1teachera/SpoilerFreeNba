@@ -11,7 +11,7 @@
     <artifactId>spoilerfree-sports-app</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>spoilerfree-sports-app</name>
-    <description>No spoiler web app</description>
+    <description>SpoilerFree web app</description>
 
     <properties>
         <java.version>13</java.version>

@@ -1,18 +1,18 @@
 package com.zlatenov.userauthorisationservice.repository;
 
-import com.zlatenov.userauthorisationservice.model.UserEntity;
+import com.zlatenov.userauthorisationservice.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  * @author Angel Zlatenov
  */
-public interface UserRepository extends JpaRepository<UserEntity, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
-    UserEntity findByUsernameAndPassword(String username, String password);
+    User findByUsernameAndPassword(String username, String password);
 
     boolean existsByUsername(String username);
 
     boolean existsByEmail(String email);
 
-    UserEntity findByEmailAndPassword(String email, String password);
+    User findByEmailAndPassword(String email, String password);
 }

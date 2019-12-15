@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author Angel Zlatenov
@@ -22,8 +22,18 @@ public class GamesModelTransformer {
 
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-    public List<GameViewModel> transformToGameViewModel(List<Game> entities) {
-        return Collections.singletonList(new GameViewModel());
+    public List<GameViewModel> transformToGameViewModels(List<Game> entities) {
+        return entities.stream().map(this::transformToGameViewModel).collect(Collectors.toList());
+    }
+
+    private GameViewModel transformToGameViewModel(Game game) {
+        return GameViewModel.builder()
+                .homeTeam(game.getHomeTeam().getFullName())
+                .awayTeam(game.getAwayTeam().getFullName())
+                .homeTeamPoints(game.getHomeTeamScore())
+                .awayTeamPoints(game.getHomeTeamScore())
+                .date(game.getStartTimeUtc().toString())
+                .build();
     }
 
     public List<Game> transformToGamesList(List<GameDto> gamesDto) throws ParseException {

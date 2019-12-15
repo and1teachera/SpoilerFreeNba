@@ -1,13 +1,10 @@
 package com.zlatenov.spoilerfreesportsapi.model.dto.user;
 
-import com.zlatenov.spoilerfreesportsapi.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Date;
 
 /**
  * @author Angel Zlatenov
@@ -18,8 +15,9 @@ import java.util.Date;
 @AllArgsConstructor
 @Getter
 @Setter
-public class LoggedUserDto {
+public class LogUserDto {
 
-    private Date lastLoginDate;
-    private Role role;
+    private String username;
+    private String password;
+
 }

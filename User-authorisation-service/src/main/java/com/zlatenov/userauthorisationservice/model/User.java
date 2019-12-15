@@ -22,28 +22,19 @@ import java.util.Date;
 @Getter
 @Setter
 @Table(name = "USER")
-public class UserEntity extends BaseEntity {
+public class User extends BaseEntity {
 
-    @Column(name = "USERNAME", nullable = false, unique = true, updatable = false)
+    @Column(name = "username", nullable = false, unique = true, updatable = false)
     private String username;
 
-    @Column(name = "PASSWORD", nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "EMAIL", nullable = false, unique = true)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Enumerated(EnumType.STRING)
     private Role role;
-
-//    @ManyToMany
-//    @JoinTable(
-//            name = "users_roles",
-//            joinColumns = @JoinColumn(
-//                    name = "user_id", referencedColumnName = "id"),
-//            inverseJoinColumns = @JoinColumn(
-//                    name = "role_id", referencedColumnName = "id"))
-//    private Collection<Roles> roles;
 
     @Column(name = "LAST_LOGIN")
     private Date lastLogin;

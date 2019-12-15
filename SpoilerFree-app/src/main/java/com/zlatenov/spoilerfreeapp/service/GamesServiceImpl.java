@@ -12,8 +12,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.sql.Date;
 import java.text.ParseException;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -71,7 +74,33 @@ public class GamesServiceImpl implements GameService {
 
     @Override
     public List<GameViewModel> getAllGames() {
-        return gamesModelTransformer.transformToGameViewModel(gamesRepository.findAll());
+        List<Game> games = /*gamesRepository.findAll()*/ Arrays.asList(Game.builder()
+                                                                               .homeTeam(Team.builder()
+                                                                                                 .fullName(
+                                                                                                         "Chicago Bulls")
+                                                                                                 .build())
+                                                                               .awayTeam(Team.builder()
+                                                                                                 .fullName(
+                                                                                                         "Boston Celtics")
+                                                                                                 .build())
+                                                                               .homeTeamScore(Short.valueOf("100"))
+                                                                               .awayTeamScore(Short.valueOf("120"))
+                                                                               .startTimeUtc(Date.from(Instant.now()))
+                                                                               .build(),
+                                                                       Game.builder()
+                                                                               .homeTeam(Team.builder()
+                                                                                                 .fullName(
+                                                                                                         "Orlando Magic")
+                                                                                                 .build())
+                                                                               .awayTeam(Team.builder()
+                                                                                                 .fullName(
+                                                                                                         "LA Clippers")
+                                                                                                 .build())
+                                                                               .homeTeamScore(Short.valueOf("130"))
+                                                                               .awayTeamScore(Short.valueOf("140"))
+                                                                               .startTimeUtc(Date.from(Instant.now()))
+                                                                               .build());
+        return gamesModelTransformer.transformToGameViewModels(games);
     }
 
 }

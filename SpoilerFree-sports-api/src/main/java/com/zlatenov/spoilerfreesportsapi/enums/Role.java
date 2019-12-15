@@ -5,5 +5,5 @@ package com.zlatenov.spoilerfreesportsapi.enums;
  */
 public enum Role {
 
-    USER, ADMIN
+    USER, ADMIN, SUPER_USER
 }

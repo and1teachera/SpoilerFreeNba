@@ -71,8 +71,8 @@ public class GamesModelTransformer {
                 .awayTeamName(gameServiceModel.getAwayTeamFullName())
                 .date(gameServiceModel.getStartTime().toString())
                 .gameInformationDto(GameInformationDto.builder()
-//                                            .arena(gameServiceModel.getArena())
-//                                            .city(gameServiceModel.getCity())
+                                            .arena(gameServiceModel.getArena())
+                                            .city(gameServiceModel.getCity())
                                             .score(gameServiceModel.getScore())
                                             .startTime(gameServiceModel.getStartTime().toString())
                                             .endTime(Optional.ofNullable(gameServiceModel.getEndTime())
@@ -89,7 +89,6 @@ public class GamesModelTransformer {
     private Game transformToGameEntity(GameServiceModel gameServiceModel) {
         Game gameEntity = new Game();
         modelMapper.map(gameServiceModel, gameEntity);
-        //        teamsModelTransformer.transformToTeamEntity(gameServiceModel.getHomeTeamServiceModel())
         gameEntity.setHomeTeam(gameServiceModel.getHomeTeamFullName());
         gameEntity.setAwayTeam(gameServiceModel.getAwayTeamFullName());
         gameEntity.setStartTimeUtc(Date.from(

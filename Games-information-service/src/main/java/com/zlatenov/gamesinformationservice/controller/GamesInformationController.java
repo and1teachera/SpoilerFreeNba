@@ -1,7 +1,7 @@
 package com.zlatenov.gamesinformationservice.controller;
 
 import com.zlatenov.gamesinformationservice.model.service.GameServiceModel;
-import com.zlatenov.gamesinformationservice.service.GamesInformationServiceImpl;
+import com.zlatenov.gamesinformationservice.service.GamesInformationService;
 import com.zlatenov.gamesinformationservice.transformer.GamesModelTransformer;
 import com.zlatenov.spoilerfreesportsapi.model.dto.game.GamesDto;
 import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class GamesInformationController {
 
-    private final GamesInformationServiceImpl gamesInformationService;
+    private final GamesInformationService gamesInformationService;
     private final GamesModelTransformer gamesModelTransformer;
 
     @GetMapping(path = "/games")
@@ -34,7 +34,6 @@ public class GamesInformationController {
                                                                              .filter(gameServiceModel ->
                                                                                              gameServiceModel.getStartTime().isAfter(
                                                                                                      zonedDateTime))
-                                                                              .limit(1000)
                                                                              .collect(Collectors.toList()));
         return ResponseEntity
                 .ok(gamesDto);

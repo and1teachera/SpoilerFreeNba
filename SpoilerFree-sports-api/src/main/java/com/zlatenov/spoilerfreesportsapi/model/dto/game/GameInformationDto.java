@@ -20,7 +20,7 @@ public class GameInformationDto {
 
     private String startTime;
     private String endTime;
-//    private String arena;
-//    private String city;
+    private String arena;
+    private String city;
     private Score score;
 }

@@ -12,5 +12,5 @@ import java.util.List;
 
 public interface GamesRepository extends JpaRepository<Game, String> {
 
-    List<Game> findAllWithStartTimeUtcTimeBetween(Date startDateUtc, Date endDateUtc);
+    List<Game> findAllByStartTimeUtcBetween(Date startDateUtc, Date endDateUtc);
 }

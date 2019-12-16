@@ -10,7 +10,9 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Angel Zlatenov
@@ -37,4 +39,8 @@ public class Game extends BaseEntity {
     private Team awayTeam;
     private Short homeTeamScore;
     private Short awayTeamScore;
+
+    @OneToMany(mappedBy = "game", cascade = CascadeType.REMOVE)
+    private List<Video> videos;
+
 }

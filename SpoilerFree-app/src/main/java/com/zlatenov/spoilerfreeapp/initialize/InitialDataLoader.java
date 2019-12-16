@@ -4,6 +4,7 @@ import com.zlatenov.spoilerfreeapp.service.GameService;
 import com.zlatenov.spoilerfreeapp.service.TeamService;
 import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
 import lombok.AllArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
@@ -20,12 +21,14 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-        teamsService.fetchAllTeams();
-        try {
-            gamesService.fetchAllGames();
-        }
-        catch (UnresponsiveAPIException e) {
-            e.printStackTrace();
+        if (CollectionUtils.isEmpty(teamsService.getAllTeams())) {
+            teamsService.fetchAllTeams();
+            try {
+                gamesService.fetchAllGames();
+            }
+            catch (UnresponsiveAPIException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

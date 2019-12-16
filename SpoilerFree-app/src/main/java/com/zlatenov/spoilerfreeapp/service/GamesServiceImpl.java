@@ -83,7 +83,7 @@ public class GamesServiceImpl implements GameService {
         Date start = Date.from(date.toInstant().minus(2, ChronoUnit.DAYS));
         Date end = Date.from(date.toInstant().plus(3, ChronoUnit.DAYS));
         return gamesModelTransformer.transformToGameViewModels(
-                gamesRepository.findAllWithStartTimeUtcTimeBetween(start, end));
+                gamesRepository.findAllByStartTimeUtcBetween(start, end));
     }
 
     @Override

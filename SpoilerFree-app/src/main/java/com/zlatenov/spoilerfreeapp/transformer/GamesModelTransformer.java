@@ -46,7 +46,8 @@ public class GamesModelTransformer {
 
     private Game transformToGame(GameDto gameDto) throws ParseException {
         return Game.builder()
-                //.arena(gameDto.getGameInformationDto().getArena())
+                .arena(gameDto.getGameInformationDto().getArena())
+                .city(gameDto.getGameInformationDto().getCity())
                 .startTimeUtc(simpleDateFormat.parse(gameDto.getGameInformationDto().getStartTime()))
                 .endTimeUtc(gameDto.getGameInformationDto().getEndTime() != null ?
                                     simpleDateFormat.parse(gameDto.getGameInformationDto().getEndTime()) :

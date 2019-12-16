@@ -1,10 +1,10 @@
 package com.zlatenov.teamsinformationservice.service;
 
 import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
+import com.zlatenov.teamsinformationservice.model.entity.Team;
 import com.zlatenov.teamsinformationservice.model.response.RapidApiTeamsResponse;
 import com.zlatenov.teamsinformationservice.model.response.TeamResponseModel;
 import com.zlatenov.teamsinformationservice.model.service.TeamServiceModel;
-import com.zlatenov.teamsinformationservice.model.entity.Team;
 import com.zlatenov.teamsinformationservice.processor.ExternalAPIContentProcessor;
 import com.zlatenov.teamsinformationservice.repository.TeamRepository;
 import com.zlatenov.teamsinformationservice.transformer.TeamsModelTransformer;
@@ -51,11 +51,7 @@ public class TeamsInformationServiceImpl implements TeamsInformationService {
     }
 
     @Override
-    public void initializeDatabase() throws IOException, UnresponsiveAPIException {
-        initializeTeamsInformation();
-    }
-
-    private void initializeTeamsInformation() throws IOException, UnresponsiveAPIException {
+    public void initializeTeamsDatabase() throws IOException, UnresponsiveAPIException {
         List<TeamServiceModel> teamServiceModels = initTeamsData();
 
         List<TeamServiceModel> teamServiceModelsFromDB = teamsModelTransformer.transformEntitiesToTeamServiceModels(
@@ -78,6 +74,7 @@ public class TeamsInformationServiceImpl implements TeamsInformationService {
         teamServiceModels.removeAll(commonElements);
         saveTeams(teamServiceModels);
     }
+
 
     private void saveTeams(List<TeamServiceModel> teamServiceModels) {
         List<Team> teams = teamsModelTransformer.transformToTeamEntities(teamServiceModels);

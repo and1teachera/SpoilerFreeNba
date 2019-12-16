@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface GamesInformationService {
 
-    List<GameServiceModel> getAllGames() throws IOException, UnresponsiveAPIException;
+    List<GameServiceModel> getAllGames();
 
     List<GameServiceModel> initGamesData() throws IOException, UnresponsiveAPIException;
 

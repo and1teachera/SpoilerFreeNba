@@ -142,7 +142,7 @@ public class StandingsServiceImpl implements StandingsService {
         dateListMap.keySet()
                 .forEach(date -> standingsServiceModelList.addAll(
                         simulateStandingsForDate(date, currentTeamStanding, dateListMap.get(date))));
-
+        System.out.println();
     }
 
     @Override
@@ -269,8 +269,8 @@ public class StandingsServiceImpl implements StandingsService {
         Map<Date, List<Game>> gamesToDate = new TreeMap<>();
         for (Game game : games) {
             Score score = game.getScore();
-            if (game.getDate().before(getCurrentDateWithoutTime()) && (score.getHomeTeamPoints() != null
-                            && score.getAwayTeamPoints() != null)) {
+            if (game.getDate().before(getCurrentDateWithoutTime()) && (score != null
+                    && score.getHomeTeamPoints() != null && score.getAwayTeamPoints() != null)) {
                 if(!gamesToDate.containsKey(game.getDate())) {
                     gamesToDate.put(game.getDate(), new ArrayList<>());
                 }

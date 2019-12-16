@@ -16,5 +16,5 @@ public interface TeamsInformationService {
 
     List<TeamServiceModel> initTeamsData() throws IOException, UnresponsiveAPIException;
 
-    void initializeDatabase() throws IOException, UnresponsiveAPIException;
+    void initializeTeamsDatabase() throws IOException, UnresponsiveAPIException;
 }

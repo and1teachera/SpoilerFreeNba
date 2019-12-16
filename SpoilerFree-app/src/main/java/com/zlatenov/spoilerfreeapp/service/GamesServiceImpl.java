@@ -12,11 +12,12 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.sql.Date;
 import java.text.ParseException;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -74,33 +75,23 @@ public class GamesServiceImpl implements GameService {
 
     @Override
     public List<GameViewModel> getAllGames() {
-        List<Game> games = /*gamesRepository.findAll()*/ Arrays.asList(Game.builder()
-                                                                               .homeTeam(Team.builder()
-                                                                                                 .fullName(
-                                                                                                         "Chicago Bulls")
-                                                                                                 .build())
-                                                                               .awayTeam(Team.builder()
-                                                                                                 .fullName(
-                                                                                                         "Boston Celtics")
-                                                                                                 .build())
-                                                                               .homeTeamScore(Short.valueOf("100"))
-                                                                               .awayTeamScore(Short.valueOf("120"))
-                                                                               .startTimeUtc(Date.from(Instant.now()))
-                                                                               .build(),
-                                                                       Game.builder()
-                                                                               .homeTeam(Team.builder()
-                                                                                                 .fullName(
-                                                                                                         "Orlando Magic")
-                                                                                                 .build())
-                                                                               .awayTeam(Team.builder()
-                                                                                                 .fullName(
-                                                                                                         "LA Clippers")
-                                                                                                 .build())
-                                                                               .homeTeamScore(Short.valueOf("130"))
-                                                                               .awayTeamScore(Short.valueOf("140"))
-                                                                               .startTimeUtc(Date.from(Instant.now()))
-                                                                               .build());
-        return gamesModelTransformer.transformToGameViewModels(games);
+        return gamesModelTransformer.transformToGameViewModels(gamesRepository.findAll());
     }
 
+    @Override
+    public List<GameViewModel> getGameViewModelsForDate(Date date) {
+        Date start = Date.from(date.toInstant().minus(2, ChronoUnit.DAYS));
+        Date end = Date.from(date.toInstant().plus(3, ChronoUnit.DAYS));
+        return gamesModelTransformer.transformToGameViewModels(
+                gamesRepository.findAllWithStartTimeUtcTimeBetween(start, end));
+    }
+
+    @Override
+    public List<Date> createDaysNavigationList(Date date) {
+        Instant instant = date.toInstant();
+        return Arrays.asList(Date.from(instant.minus(2, ChronoUnit.DAYS)),
+                             Date.from(instant.minus(1, ChronoUnit.DAYS)), date,
+                             Date.from(instant.plus(1, ChronoUnit.DAYS)),
+                             Date.from(instant.plus(2, ChronoUnit.DAYS)));
+    }
 }

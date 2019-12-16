@@ -38,7 +38,8 @@ public class GamesTransformer {
 
         Map<String, List<Team>> teamsMap = teams.stream().collect(groupingBy(Team::getName));
 
-        teamsSet.forEach(team -> team = teamsMap.get(team.getName()).get(0));
+        games.forEach(game -> game.setHomeTeam(teamsMap.get(game.getHomeTeam().getName()).get(0)));
+        games.forEach(game -> game.setAwayTeam(teamsMap.get(game.getAwayTeam().getName()).get(0)));
 
         return games;
     }

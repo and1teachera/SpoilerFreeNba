@@ -31,7 +31,7 @@ public class GamesModelTransformer {
                 .homeTeam(game.getHomeTeam().getFullName())
                 .awayTeam(game.getAwayTeam().getFullName())
                 .homeTeamPoints(game.getHomeTeamScore())
-                .awayTeamPoints(game.getHomeTeamScore())
+                .awayTeamPoints(game.getAwayTeamScore())
                 .date(game.getStartTimeUtc().toString())
                 .build();
     }
@@ -46,7 +46,7 @@ public class GamesModelTransformer {
 
     private Game transformToGame(GameDto gameDto) throws ParseException {
         return Game.builder()
-                .arena(gameDto.getGameInformationDto().getArena())
+                //.arena(gameDto.getGameInformationDto().getArena())
                 .startTimeUtc(simpleDateFormat.parse(gameDto.getGameInformationDto().getStartTime()))
                 .endTimeUtc(gameDto.getGameInformationDto().getEndTime() != null ?
                                     simpleDateFormat.parse(gameDto.getGameInformationDto().getEndTime()) :

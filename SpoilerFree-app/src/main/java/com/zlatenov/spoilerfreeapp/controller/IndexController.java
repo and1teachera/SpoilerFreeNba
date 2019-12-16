@@ -6,6 +6,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Date;
+
+import static com.zlatenov.spoilerfreesportsapi.util.DateUtil.getCurrentDateWithoutTime;
+
 /**
  * @author Angel Zlatenov
  */
@@ -19,7 +23,10 @@ public class IndexController extends BaseController {
     @GetMapping({"/index", "/index.html", "/"})
     public ModelAndView index(ModelAndView modelAndView) {
         modelAndView.setViewName("index.html");
-        modelAndView.addObject("games",gamesService.getAllGames());
+        Date currentDate = getCurrentDateWithoutTime();
+        modelAndView.addObject("games", gamesService.getGameViewModelsForDate(currentDate));
+        modelAndView.addObject("date", currentDate);
+        modelAndView.addObject("days", gamesService.createDaysNavigationList(currentDate));
         return modelAndView;
     }
 }

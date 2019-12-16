@@ -27,7 +27,7 @@ public class DateUtil {
     public static Date parseDate(String date) {
         Date result = null;
         try {
-            result = DATE_FORMAT.parse(DATE_FORMAT.format(date));
+            result = DATE_FORMAT.parse(date);
         }
         catch (ParseException e) {
             e.printStackTrace();

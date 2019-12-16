@@ -34,6 +34,7 @@ public class GamesInformationController {
                                                                              .filter(gameServiceModel ->
                                                                                              gameServiceModel.getStartTime().isAfter(
                                                                                                      zonedDateTime))
+                                                                              .limit(1000)
                                                                              .collect(Collectors.toList()));
         return ResponseEntity
                 .ok(gamesDto);

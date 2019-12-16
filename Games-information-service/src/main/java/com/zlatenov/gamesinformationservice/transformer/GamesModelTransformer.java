@@ -71,8 +71,8 @@ public class GamesModelTransformer {
                 .awayTeamName(gameServiceModel.getAwayTeamFullName())
                 .date(gameServiceModel.getStartTime().toString())
                 .gameInformationDto(GameInformationDto.builder()
-                                            .arena(gameServiceModel.getArena())
-                                            .city(gameServiceModel.getCity())
+//                                            .arena(gameServiceModel.getArena())
+//                                            .city(gameServiceModel.getCity())
                                             .score(gameServiceModel.getScore())
                                             .startTime(gameServiceModel.getStartTime().toString())
                                             .endTime(Optional.ofNullable(gameServiceModel.getEndTime())
@@ -115,6 +115,10 @@ public class GamesModelTransformer {
                     ZonedDateTime.ofInstant(gameEntity.getEndTimeUtc().toInstant(), ZoneId.of(ZoneOffset.UTC.getId())));
         }
 
+        gameServiceModel.setScore(Score.builder()
+                                          .homeTeamPoints(gameEntity.getHomeTeamScore())
+                                          .awayTeamPoints(gameEntity.getAwayTeamScore())
+                                          .build());
         gameServiceModel.setHomeTeamFullName(gameEntity.getHomeTeam());
         gameServiceModel.setAwayTeamFullName(gameEntity.getAwayTeam());
         return gameServiceModel;

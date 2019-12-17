@@ -1,7 +1,8 @@
 package com.zlatenov.spoilerfreeapp.service;
 
 import com.zlatenov.spoilerfreeapp.model.entity.Team;
-import com.zlatenov.spoilerfreeapp.model.view.TeamViewModel;
+import com.zlatenov.spoilerfreeapp.model.service.PlayerServiceModel;
+import com.zlatenov.spoilerfreeapp.model.service.TeamServiceModel;
 import com.zlatenov.spoilerfreeapp.repository.TeamRepository;
 import com.zlatenov.spoilerfreeapp.transformer.TeamModelTransformer;
 import com.zlatenov.spoilerfreesportsapi.model.dto.team.TeamsDto;
@@ -33,13 +34,42 @@ public class TeamServiceImpl implements TeamService {
         saveTeamsInformation(teamsDto);
     }
 
+    @Override
+    public List<TeamServiceModel> getAllTeams() {
+        return null;
+    }
+
+    @Override
+    public List<PlayerServiceModel> getPlayersByTeamName(String teamName) {
+        return null;
+    }
+
     private void saveTeamsInformation(TeamsDto teamsDto) {
         List<Team> teams = teamModelTransformer.transformToTeamsList(teamsDto);
         teamRepository.saveAll(teams);
     }
+//
+//    @Override
+//    public List<Team> getAllTeams() {
+//        return teamRepository.findAll();
+//    }
+
+//    public List<Player> getPlayersForTeam(TeamServiceModel teamServiceModel) {
+//        return getPlayersByTeamName(teamServiceModel.getFullName());
+//    }
+
+//    @Override
+//    public List<Player> getPlayersByTeamName(String teamName) {
+//        return null;
+//    }
 
     @Override
-    public List<TeamViewModel> getAllTeams() {
-        return null;
+    public void addRemoveFromWatched(String teamName) {
+
+    }
+
+    @Override
+    public void addRemoveFromFavorite(String teamName) {
+
     }
 }

@@ -2,8 +2,9 @@ package com.zlatenov.spoilerfreeapp.transformer;
 
 import com.zlatenov.spoilerfreeapp.model.entity.Game;
 import com.zlatenov.spoilerfreeapp.model.entity.Team;
+import com.zlatenov.spoilerfreeapp.model.service.GameServiceModel;
 import com.zlatenov.spoilerfreeapp.model.view.GameViewModel;
-import com.zlatenov.spoilerfreesportsapi.model.dto.Score;
+import com.zlatenov.spoilerfreesportsapi.model.pojo.Score;
 import com.zlatenov.spoilerfreesportsapi.model.dto.game.GameDto;
 import org.springframework.stereotype.Component;
 
@@ -22,17 +23,17 @@ public class GamesModelTransformer {
 
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-    public List<GameViewModel> transformToGameViewModels(List<Game> entities) {
-        return entities.stream().map(this::transformToGameViewModel).collect(Collectors.toList());
+    public List<GameViewModel> transformToGameViewModels(List<GameServiceModel> games) {
+        return games.stream().map(this::transformToGameViewModel).collect(Collectors.toList());
     }
 
-    private GameViewModel transformToGameViewModel(Game game) {
+    private GameViewModel transformToGameViewModel(GameServiceModel game) {
         return GameViewModel.builder()
-                .homeTeam(game.getHomeTeam().getFullName())
-                .awayTeam(game.getAwayTeam().getFullName())
-                .homeTeamPoints(game.getHomeTeamScore())
-                .awayTeamPoints(game.getAwayTeamScore())
-                .date(game.getStartTimeUtc().toString())
+//                .homeTeam(game.getHomeTeam().getFullName())
+//                .awayTeam(game.getAwayTeam().getFullName())
+//                .homeTeamPoints(game.getHomeTeamScore())
+//                .awayTeamPoints(game.getAwayTeamScore())
+//                .date(game.getStartTimeUtc().toString())
                 .build();
     }
 
@@ -63,4 +64,7 @@ public class GamesModelTransformer {
                 .build();
     }
 
+    public List<GameViewModel> transformServiceModelsToViews(List<GameServiceModel> gamesForDate) {
+        return null;
+    }
 }

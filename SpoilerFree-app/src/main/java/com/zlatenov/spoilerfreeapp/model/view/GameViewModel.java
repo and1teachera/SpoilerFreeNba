@@ -12,14 +12,15 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Getter
 @Setter
-@Builder
 public class GameViewModel {
 
-    private String homeTeam;
-    private String awayTeam;
+    private TeamViewModel homeTeam;
+    private TeamViewModel awayTeam;
     private Short homeTeamPoints;
     private Short awayTeamPoints;
     private String date;
+
 }

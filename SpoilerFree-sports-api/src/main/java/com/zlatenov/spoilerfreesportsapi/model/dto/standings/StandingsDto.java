@@ -1,5 +1,7 @@
 package com.zlatenov.spoilerfreesportsapi.model.dto.standings;
 
+import com.zlatenov.spoilerfreesportsapi.model.pojo.Record;
+import com.zlatenov.spoilerfreesportsapi.model.pojo.Streak;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,4 +28,5 @@ public class StandingsDto {
     private Record divisionRecord;
     private Streak streak;
     private Date date;
+    
 }

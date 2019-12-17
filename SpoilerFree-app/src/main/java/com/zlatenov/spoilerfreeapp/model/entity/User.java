@@ -1,6 +1,6 @@
 package com.zlatenov.spoilerfreeapp.model.entity;
 
-import com.zlatenov.spoilerfreesportsapi.enums.Role;
+import com.zlatenov.spoilerfreeapp.model.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

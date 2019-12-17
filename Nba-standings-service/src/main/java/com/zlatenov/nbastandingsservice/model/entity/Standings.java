@@ -1,6 +1,6 @@
 package com.zlatenov.nbastandingsservice.model.entity;
 
-import com.zlatenov.spoilerfreesportsapi.model.dto.standings.Streak;
+import com.zlatenov.spoilerfreesportsapi.model.pojo.Streak;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -2,7 +2,7 @@ package com.zlatenov.spoilerfreeapp.service;
 
 import com.zlatenov.spoilerfreeapp.model.entity.Game;
 import com.zlatenov.spoilerfreeapp.model.entity.Team;
-import com.zlatenov.spoilerfreeapp.model.view.GameViewModel;
+import com.zlatenov.spoilerfreeapp.model.service.GameServiceModel;
 import com.zlatenov.spoilerfreeapp.repository.GamesRepository;
 import com.zlatenov.spoilerfreeapp.repository.TeamRepository;
 import com.zlatenov.spoilerfreeapp.transformer.GamesModelTransformer;
@@ -15,12 +15,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -55,6 +50,11 @@ public class GamesServiceImpl implements GameService {
         }
     }
 
+    @Override
+    public List<GameServiceModel> getAllGames() {
+        return null;
+    }
+
     private void saveGamesInformation(List<Game> games) throws ParseException {
         Map<String, List<Team>> teamToFullName = teamRepository.findAll()
                 .stream()
@@ -73,18 +73,24 @@ public class GamesServiceImpl implements GameService {
         gamesRepository.saveAll(gamesToPersist);
     }
 
-    @Override
-    public List<GameViewModel> getAllGames() {
-        return gamesModelTransformer.transformToGameViewModels(gamesRepository.findAll());
-    }
+//    @Override
+//    public List<GameViewModel> getAllGames() {
+//        return gamesModelTransformer.transformToGameViewModels(gamesRepository.findAll());
+//    }
 
     @Override
-    public List<GameViewModel> getGameViewModelsForDate(Date date) {
-        Date start = Date.from(date.toInstant().minus(2, ChronoUnit.DAYS));
-        Date end = Date.from(date.toInstant().plus(3, ChronoUnit.DAYS));
-        return gamesModelTransformer.transformToGameViewModels(
-                gamesRepository.findAllByStartTimeUtcBetween(start, end));
+    public List<GameServiceModel> getGamesForDate(Date date) {
+        return null;
     }
+
+//    @Override
+//    public List<GameViewModel> getGameViewModelsForDate(Date date) {
+//        Date start = Date.from(date.toInstant().minus(2, ChronoUnit.DAYS));
+//        Date end = Date.from(date.toInstant().plus(3, ChronoUnit.DAYS));
+//        return gamesModelTransformer.transformToGameViewModels(
+//                gamesRepository.findAllByStartTimeUtcBetween(start, end));
+//        return null;
+//    }
 
     @Override
     public List<Date> createDaysNavigationList(Date date) {
@@ -93,5 +99,15 @@ public class GamesServiceImpl implements GameService {
                              Date.from(instant.minus(1, ChronoUnit.DAYS)), date,
                              Date.from(instant.plus(1, ChronoUnit.DAYS)),
                              Date.from(instant.plus(2, ChronoUnit.DAYS)));
+    }
+
+    @Override
+    public List<GameServiceModel> getGameInformation(String gameName, String date) {
+        return null;
+    }
+
+    @Override
+    public List<GameServiceModel> getGamesForTeam(String teamName) {
+        return null;
     }
 }

@@ -1,11 +1,11 @@
 package com.zlatenov.userauthorisationservice.service;
 
-import com.zlatenov.spoilerfreesportsapi.enums.Role;
 import com.zlatenov.spoilerfreesportsapi.model.dto.user.LogUserDto;
-import com.zlatenov.spoilerfreesportsapi.model.dto.user.UserDto;
 import com.zlatenov.spoilerfreesportsapi.model.dto.user.RegisterUserDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.user.UserDto;
 import com.zlatenov.spoilerfreesportsapi.model.exception.AuthorisationException;
 import com.zlatenov.spoilerfreesportsapi.model.exception.CannotRegisterUserException;
+import com.zlatenov.userauthorisationservice.model.Role;
 import com.zlatenov.userauthorisationservice.model.User;
 import com.zlatenov.userauthorisationservice.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -28,34 +28,33 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
     @Override
     public UserDto logUser(LogUserDto authenticateUserDto) throws AuthorisationException {
         User userEntity = Optional.ofNullable(Pattern.matches(EMAIL_REGEX, authenticateUserDto.getUsername()) ?
-                                                            userRepository.findByEmailAndPassword(
-                                                                    authenticateUserDto.getUsername(),
-                                                                    authenticateUserDto.getPassword()) :
-                                                            userRepository.findByUsernameAndPassword(
-                                                                    authenticateUserDto.getUsername(),
-                                                                    authenticateUserDto.getPassword()))
+                userRepository.findByEmailAndPassword(
+                        authenticateUserDto.getUsername(),
+                        authenticateUserDto.getPassword()) :
+                userRepository.findByUsernameAndPassword(
+                        authenticateUserDto.getUsername(),
+                        authenticateUserDto.getPassword()))
                 .orElseThrow(AuthorisationException::new);
 
-        userEntity.setRole(Role.ADMIN);
+        userEntity.setRole(Role.USER);
 
-        return UserDto.builder().lastLoginDate(userEntity.getLastLogin()).role(userEntity.getRole()).build();
+        return UserDto.builder().lastLoginDate(userEntity.getLastLogin())
+                .role(userEntity.getRole().toString()).build();
     }
 
     @Override
     public UserDto registerUser(RegisterUserDto registerUserDto) throws CannotRegisterUserException {
-        if (userRepository.existsByUsername(registerUserDto.getUsername())) {
-            throw new CannotRegisterUserException("User with that username already exists");
-        }
-        if (userRepository.existsByEmail(registerUserDto.getEmail())) {
-            throw new CannotRegisterUserException("User with that email already exists");
+        if (userRepository.existsByUsername(registerUserDto.getUsername()) || userRepository.existsByEmail(
+                registerUserDto.getEmail())) {
+            throw new CannotRegisterUserException("User already exists");
         }
         User userEntity = new User();
         userEntity.setUsername(registerUserDto.getUsername());
         userEntity.setPassword(registerUserDto.getPassword());
         userEntity.setEmail(registerUserDto.getEmail());
-        userEntity.setRole(Role.ADMIN);
+        userEntity.setRole(Role.USER);
         userEntity = userRepository.save(userEntity);
 
-        return UserDto.builder().role(userEntity.getRole()).build();
+        return UserDto.builder().role(userEntity.getRole().toString()).build();
     }
 }

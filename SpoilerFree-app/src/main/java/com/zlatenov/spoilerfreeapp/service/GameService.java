@@ -1,6 +1,6 @@
 package com.zlatenov.spoilerfreeapp.service;
 
-import com.zlatenov.spoilerfreeapp.model.view.GameViewModel;
+import com.zlatenov.spoilerfreeapp.model.service.GameServiceModel;
 import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
 
 import java.util.Date;
@@ -14,9 +14,13 @@ public interface GameService {
 
     void fetchAllGames() throws UnresponsiveAPIException;
 
-    List<GameViewModel> getAllGames();
+    List<GameServiceModel> getAllGames();
 
-    List<GameViewModel> getGameViewModelsForDate(Date date);
+    List<GameServiceModel> getGamesForDate(Date date);
 
     List<Date> createDaysNavigationList(Date date);
+
+    List<GameServiceModel> getGameInformation(String gameName, String date);
+
+    List<GameServiceModel> getGamesForTeam(String teamName);
 }

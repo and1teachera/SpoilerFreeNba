@@ -7,7 +7,7 @@ import com.zlatenov.gamesinformationservice.model.entity.Game;
 import com.zlatenov.spoilerfreesportsapi.model.dto.game.GameDto;
 import com.zlatenov.spoilerfreesportsapi.model.dto.game.GameInformationDto;
 import com.zlatenov.spoilerfreesportsapi.model.dto.game.GamesDto;
-import com.zlatenov.spoilerfreesportsapi.model.dto.Score;
+import com.zlatenov.spoilerfreesportsapi.model.pojo.Score;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;

@@ -1,6 +1,8 @@
 package com.zlatenov.spoilerfreeapp.transformer;
 
 import com.zlatenov.spoilerfreeapp.model.entity.Team;
+import com.zlatenov.spoilerfreeapp.model.service.PlayerServiceModel;
+import com.zlatenov.spoilerfreeapp.model.view.PlayersViewModel;
 import com.zlatenov.spoilerfreesportsapi.model.dto.team.TeamDto;
 import com.zlatenov.spoilerfreesportsapi.model.dto.team.TeamsDto;
 import org.springframework.stereotype.Component;
@@ -39,5 +41,9 @@ public class TeamModelTransformer {
                 .confName(teamDto.getConfName())
                 .divName(teamDto.getDivName())
                 .build();
+    }
+
+    public PlayersViewModel transformToPlayersViewModel(List<PlayerServiceModel> playersByTeamName) {
+        return null;
     }
 }

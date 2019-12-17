@@ -1,9 +1,8 @@
 package com.zlatenov.userauthorisationservice.controller;
 
-import com.zlatenov.spoilerfreesportsapi.enums.Role;
 import com.zlatenov.spoilerfreesportsapi.model.dto.user.LogUserDto;
-import com.zlatenov.spoilerfreesportsapi.model.dto.user.UserDto;
 import com.zlatenov.spoilerfreesportsapi.model.dto.user.RegisterUserDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.user.UserDto;
 import com.zlatenov.spoilerfreesportsapi.model.exception.AuthorisationException;
 import com.zlatenov.spoilerfreesportsapi.model.exception.CannotRegisterUserException;
 import com.zlatenov.userauthorisationservice.service.UserAuthenticationService;
@@ -40,7 +39,7 @@ public class UserAuthenticationController {
     private ResponseEntity register(@RequestBody RegisterUserDto registerUserDto) {
         UserDto loggedUserDto;
         try {
-            registerUserDto.setRole(Role.ADMIN);
+            //registerUserDto.setRole(Role.valueOf(""));
             loggedUserDto = userAuthenticationService.registerUser(registerUserDto);
         }
         catch (CannotRegisterUserException e) {

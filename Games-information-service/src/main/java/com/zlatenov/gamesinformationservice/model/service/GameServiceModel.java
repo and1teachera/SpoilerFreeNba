@@ -1,6 +1,6 @@
 package com.zlatenov.gamesinformationservice.model.service;
 
-import com.zlatenov.spoilerfreesportsapi.model.dto.Score;
+import com.zlatenov.spoilerfreesportsapi.model.pojo.Score;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

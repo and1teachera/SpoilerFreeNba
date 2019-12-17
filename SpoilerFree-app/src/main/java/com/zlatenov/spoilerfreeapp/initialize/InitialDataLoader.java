@@ -22,8 +22,8 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         if (CollectionUtils.isEmpty(teamsService.getAllTeams())) {
-            teamsService.fetchAllTeams();
             try {
+                teamsService.fetchAllTeams();
                 gamesService.fetchAllGames();
             }
             catch (UnresponsiveAPIException e) {

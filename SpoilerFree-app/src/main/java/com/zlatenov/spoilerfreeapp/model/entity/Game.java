@@ -1,12 +1,7 @@
 package com.zlatenov.spoilerfreeapp.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -30,17 +25,17 @@ public class Game extends BaseEntity {
     private String arena;
     private String city;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
     @JoinColumn(name = "homeTeam_id", nullable = false)
     private Team homeTeam;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
     @JoinColumn(name = "awayTeam_id", nullable = false)
     private Team awayTeam;
     private Short homeTeamScore;
     private Short awayTeamScore;
 
-    @OneToMany(mappedBy = "game", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "game")
     private List<Video> videos;
 
 }

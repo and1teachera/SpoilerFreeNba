@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title th:text="${title}"></title>
+    <link rel="icon" th:href="${favicon}">
+    <link rel="stylesheet" type="text/css" th:href="@{/static/css/reset-css.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/static/css/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/static/css/style.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker3.css"
+          rel="stylesheet" id="bootstrap-css">
+
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script th:src="@{/static/js/jquery-3.3.1.min.js}"></script>
+    <script th:src="@{/static/js/popper.min.js}"></script>
+    <script th:src="@{/static/js/bootstrap.min.js}"></script>
+    <script th:src="@{/static/js/nba.js}"></script>
+</head>
+<body>
+
+<div class="container">
+
+    <nav class="navbar navbar-expand-sm bg-dark">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="/login">Login</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/register">Register</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/standings">Standings</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="jumbotron">
+        <h1>Bootstrap Tutorial</h1>
+        <p>Bootstrap is the most popular HTML, CSS, and JS framework for developing
+            responsive, mobile-first projects on the web.</p>
+    </div>
+    <!--    <table class="table-striped">-->
+    <!--        <tr>-->
+    <!--            <td>Test Name</td>-->
+    <!--        </tr>-->
+    <!--        <tr th:each="game : ${games}">-->
+    <!--            <td th:text="${game.homeTeam}"> </td>-->
+    <!--            <td th:text="${game.awayTeam}"> </td>-->
+    <!--            <td th:text="${game.homeTeamPoints}"> </td>-->
+    <!--            <td th:text="${game.awayTeamPoints}"> </td>-->
+    <!--        </tr>-->
+    <!--    </table>-->
+
+    <nav class="navbar navbar-expand-sm bg-dark">
+        <ul class="navbar-nav" th:each="day : ${days}">
+            <a th:text="${#dates.format(day, 'MMM-dd')}" th:href="|/day/${#dates.format(day, 'dd-MM-yyyy')}|"></a>
+        </ul>
+    </nav>
+    <section class="row">
+        <section class="col-sm-8">
+            <header>
+                <span>
+                    <a href="/day"></a>
+                    <h1 th:text="${#dates.format(date, 'dd-MMM-yyyy')}"></h1>
+                </span>
+            </header>
+            <article class="row" th:each="game,iter : ${games}" data-toggle="collapse"
+                     th:attr="data-target='.result'+${iter.index}">
+                <div class="col-sm-6">
+                    <h3 th:text="${game.homeTeam}"></h3>
+                    <p class="collapse" th:classappend="'result'+${iter.index}" th:text="${game.homeTeamPoints}"></p>
+                </div>
+                <div class="col-sm-6">
+                    <h3 th:text="${game.awayTeam}"></h3>
+                    <p class="collapse" th:classappend="'result'+${iter.index}" th:text="${game.awayTeamPoints}"></p>
+                </div>
+            </article>
+        </section>
+
+        <section class="col-sm-3 float-right">
+            <form>
+                <div class="form-group">
+                    <div class='input-group date' id='datepicker'>
+                        <input type='text' class="form-control"/>
+                        <span class="input-group-addon">
+		                        <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </section>
+</div>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+</body>
+</html>

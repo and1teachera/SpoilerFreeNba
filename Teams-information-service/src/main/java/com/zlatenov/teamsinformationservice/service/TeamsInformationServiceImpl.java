@@ -1,17 +1,14 @@
 package com.zlatenov.teamsinformationservice.service;
 
 import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
-import com.zlatenov.teamsinformationservice.model.entity.Player;
 import com.zlatenov.teamsinformationservice.model.entity.Team;
 import com.zlatenov.teamsinformationservice.model.response.RapidApiPlayersResponseModel;
 import com.zlatenov.teamsinformationservice.model.response.RapidApiTeamsResponseModel;
 import com.zlatenov.teamsinformationservice.model.response.TeamResponseModel;
 import com.zlatenov.teamsinformationservice.model.service.PlayerServiceModel;
 import com.zlatenov.teamsinformationservice.model.service.TeamServiceModel;
-import com.zlatenov.teamsinformationservice.model.transformer.PlayersModelTransformer;
 import com.zlatenov.teamsinformationservice.model.transformer.TeamsModelTransformer;
 import com.zlatenov.teamsinformationservice.processor.ExternalAPIContentProcessor;
-import com.zlatenov.teamsinformationservice.repository.PlayerRepository;
 import com.zlatenov.teamsinformationservice.repository.TeamRepository;
 import lombok.AllArgsConstructor;
 import okhttp3.OkHttpClient;
@@ -43,8 +40,6 @@ public class TeamsInformationServiceImpl implements TeamsInformationService {
     private final OkHttpClient okHttpClient;
     private final TeamRepository teamRepository;
     private final TeamsModelTransformer teamsModelTransformer;
-    private final PlayerRepository playerRepository;
-    private final PlayersModelTransformer playersModelTransformer;
     private final ExternalAPIContentProcessor processor;
 
     @Override
@@ -93,28 +88,9 @@ public class TeamsInformationServiceImpl implements TeamsInformationService {
                 teamRepository.findAll());
 
         if (CollectionUtils.isEmpty(teamServiceModelsFromDB)) {
-            //sa
-//            List<Player> players = teamServiceModels.stream()
-//                    .flatMap(teamServiceModel -> teamServiceModel.getPlayers().stream()).collect(Collectors.toList())
-//                    .stream().map(playersModelTransformer::transformToPlayer).collect(Collectors.toList());
-
             saveTeams(teamServiceModels);
             return;
-
-//            List<Team> allTeams = teamRepository.findAll();
-//            Map<String, List<Team>> teamToName = allTeams.stream().collect(groupingBy(Team::getFullName));
-//            Map<String, List<TeamServiceModel>> teamServiceModelToName = teamServiceModels.stream().collect(groupingBy(TeamServiceModel::getFullName));
-//
-//            players.
-//            teamServiceModelToName.keySet().forEach(teamName ->
-//                    teamServiceModelToName.get(teamName).get(0).getPlayers().stream()
-//                            .map(playersModelTransformer::transformToPlayer).collect(Collectors.toList())
-//                    .forEach(player -> teamToName.get(teamName).get(0).getPlayers().add(player)));
-//            teamRepository.saveAll(teamToName.values().stream().map(teams -> teams.get(0)).collect(Collectors.toList()));
-//            teamToName.values().stream().map(teams -> teams.get(0)).collect(Collectors.toList());
         }
-
-
 
         if (teamServiceModels.containsAll(teamServiceModelsFromDB)
                 && teamServiceModels.size() == teamServiceModelsFromDB.size()) {
@@ -129,14 +105,9 @@ public class TeamsInformationServiceImpl implements TeamsInformationService {
         saveTeams(teamServiceModels);
     }
 
-    private void savePlayers(List<PlayerServiceModel> players) {
-        List<Player> playerList = players.stream().map(playersModelTransformer::transformToPlayer).collect(Collectors.toList());
-        playerRepository.saveAll(playerList);
-    }
-
     private void saveTeams(List<TeamServiceModel> teamServiceModels) {
         List<Team> teams = teamsModelTransformer.transformToTeamEntities(teamServiceModels);
-//        teams.stream().collect(groupingBy(team -> team.)
+        teams.forEach(team -> team.getPlayers().forEach(player -> player.setTeam(team)));
         teamRepository.saveAll(teams);
     }
 

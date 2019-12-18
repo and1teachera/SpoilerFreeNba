@@ -1,7 +1,9 @@
 package com.zlatenov.spoilerfreeapp.initialize;
 
 import com.zlatenov.spoilerfreeapp.service.GameService;
+import com.zlatenov.spoilerfreeapp.service.StandingsService;
 import com.zlatenov.spoilerfreeapp.service.TeamService;
+import com.zlatenov.spoilerfreeapp.service.VideoService;
 import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
 import lombok.AllArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -18,6 +20,8 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
 
     private final GameService gamesService;
     private final TeamService teamsService;
+    private final StandingsService standingsService;
+    private final VideoService videoService;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
@@ -25,6 +29,8 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
             try {
                 teamsService.fetchAllTeams();
                 gamesService.fetchAllGames();
+                standingsService.fetchCurrentStandings();
+                videoService.fetchVideos();
             }
             catch (UnresponsiveAPIException e) {
                 e.printStackTrace();

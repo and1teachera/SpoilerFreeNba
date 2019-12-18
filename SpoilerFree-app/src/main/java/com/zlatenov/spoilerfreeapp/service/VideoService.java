@@ -2,6 +2,7 @@ package com.zlatenov.spoilerfreeapp.service;
 
 import com.zlatenov.spoilerfreeapp.model.service.GameServiceModel;
 import com.zlatenov.spoilerfreeapp.model.service.VideoServiceModel;
+import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
 
 import java.util.Date;
 import java.util.List;
@@ -19,4 +20,6 @@ public interface VideoService {
     void removeVideo(VideoServiceModel videoServiceModel);
 
     void addVideo(VideoServiceModel videoServiceModel);
+
+    void fetchVideos() throws UnresponsiveAPIException;
 }

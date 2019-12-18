@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface StandingsService {
 
-    void fetchAllStandings() throws UnresponsiveAPIException;
+    void fetchCurrentStandings() throws UnresponsiveAPIException;
 
     List<StandingsServiceModel> getStandingsForDate(Date date);
 

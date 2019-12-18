@@ -1,9 +1,11 @@
 package com.zlatenov.spoilerfreeapp.model.transformer;
 
 import com.zlatenov.spoilerfreeapp.model.entity.Standings;
+import com.zlatenov.spoilerfreeapp.model.entity.Team;
 import com.zlatenov.spoilerfreeapp.model.service.StandingsServiceModel;
 import com.zlatenov.spoilerfreeapp.model.view.DayStandingsModel;
 import com.zlatenov.spoilerfreeapp.model.view.StandingsViewModel;
+import com.zlatenov.spoilerfreesportsapi.model.dto.standings.StandingsDto;
 import com.zlatenov.spoilerfreesportsapi.model.pojo.Streak;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -73,6 +75,25 @@ public class StandingsModelTransformer {
                 .lossPercentage(standings.getLossPercentage())
                 .streak(Streak.builder().streak(standings.getStreak()).winStreak(standings.getWinStreak()).build())
                 .date(standings.getDate())
+                .build();
+    }
+
+    public List<Standings> transformToStandings(List<StandingsDto> standingsDtos) {
+        return standingsDtos.stream().map(this::transformToStandingRecord).collect(Collectors.toList());
+    }
+
+    private Standings transformToStandingRecord(StandingsDto standingsDto) {
+        return Standings.builder()
+                .team(Team.builder().fullName(standingsDto.getTeamName()).build())
+                .index(standingsDto.getPosition())
+                .record(standingsDto.getTeamRecord())
+                .conferenceRecord(standingsDto.getConferenceRecord())
+                .divisionRecord(standingsDto.getDivisionRecord())
+                .winPercentage(standingsDto.getStreak().getWinPercentage())
+                .lossPercentage(standingsDto.getStreak().getLossPercentage())
+                .streak(standingsDto.getStreak().getStreak())
+                .date(standingsDto.getDate())
+                .winStreak(standingsDto.getStreak().getWinStreak())
                 .build();
     }
 }

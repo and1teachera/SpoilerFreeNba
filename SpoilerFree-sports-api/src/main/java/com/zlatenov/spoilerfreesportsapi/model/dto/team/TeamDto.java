@@ -1,10 +1,8 @@
 package com.zlatenov.spoilerfreesportsapi.model.dto.team;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
+import java.util.List;
 
 /**
  * @author Angel Zlatenov
@@ -24,4 +22,5 @@ public class TeamDto {
     private String shortName;
     private String confName;
     private String divName;
+    private List<PlayerDto> playerDtos;
 }

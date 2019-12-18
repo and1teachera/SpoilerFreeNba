@@ -1,16 +1,14 @@
 package com.zlatenov.teamsinformationservice.controller;
 
 import com.zlatenov.spoilerfreesportsapi.model.dto.team.TeamsDto;
-import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
 import com.zlatenov.teamsinformationservice.model.service.TeamServiceModel;
-import com.zlatenov.teamsinformationservice.service.TeamsInformationService;
 import com.zlatenov.teamsinformationservice.model.transformer.TeamsModelTransformer;
+import com.zlatenov.teamsinformationservice.service.TeamsInformationService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -25,7 +23,7 @@ public class TeamsInformationController {
 
 
     @GetMapping(path = "/teams")
-    private ResponseEntity teams() throws IOException, UnresponsiveAPIException {
+    private ResponseEntity teams() {
         List<TeamServiceModel> allTeams = teamsInformationService.getAllTeams();
         TeamsDto teamsDto = teamsModelTransformer.transformToTeamsDto(allTeams);
 

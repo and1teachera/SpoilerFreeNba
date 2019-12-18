@@ -87,4 +87,16 @@ public class GamesModelTransformer {
                 .date(game.getStartTimeUtc())
                 .build();
     }
+
+    public List<GameDto> transformToGameDtos(List<Game> games) {
+        return games.stream().map(this::transformToGameDto).collect(Collectors.toList());
+    }
+
+    public GameDto transformToGameDto(Game game) {
+        return GameDto.builder()
+                .homeTeamName(game.getHomeTeam().getFullName())
+                .awayTeamName(game.getAwayTeam().getFullName())
+                .date(game.getStartTimeUtc().toString())
+                .build();
+    }
 }

@@ -1,10 +1,12 @@
 package com.zlatenov.nbastandingsservice.controller;
 
-import com.zlatenov.nbastandingsservice.model.service.StandingsServiceModel;
+import com.zlatenov.nbastandingsservice.model.transformer.StandingsModelTransformer;
 import com.zlatenov.nbastandingsservice.service.StandingsService;
+import com.zlatenov.spoilerfreesportsapi.model.dto.standings.StandingsDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.standings.StandingsDtos;
 import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
+import com.zlatenov.spoilerfreesportsapi.util.DateUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,21 +24,26 @@ import java.util.List;
 public class StandingsController {
 
     private StandingsService standingsService;
+    private StandingsModelTransformer standingsModelTransformer;
 
     @PostMapping(path = "/standings/current")
     private ResponseEntity standings() throws IOException, UnresponsiveAPIException {
-        //standingsService.fetchStandings();
+        List<StandingsDto> standingsDtos =
+                standingsModelTransformer.transformToStandingsDtos(
+                        standingsService.getStandingsForDate(
+                                DateUtil.getCurrentDateWithoutTime()));
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .build();
+                .ok(StandingsDtos.builder()
+                        .standingsDtos(standingsDtos)
+                        .build());
     }
 
     @PostMapping(path = "/standings")
     private ResponseEntity standingsOnDate(@RequestBody Date date) throws IOException, UnresponsiveAPIException {
-        //standingsService.fetchStandings();
-        List<StandingsServiceModel> standingsForDate = standingsService.getStandingsForDate(date);
+        List<StandingsDto> standingsDtos = standingsModelTransformer.transformToStandingsDtos(standingsService.getStandingsForDate(date));
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .build();
+                .ok(StandingsDtos.builder()
+                        .standingsDtos(standingsDtos)
+                        .build());
     }
 }

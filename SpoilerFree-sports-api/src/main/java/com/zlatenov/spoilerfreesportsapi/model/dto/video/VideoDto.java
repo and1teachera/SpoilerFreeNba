@@ -2,8 +2,6 @@ package com.zlatenov.spoilerfreesportsapi.model.dto.video;
 
 import lombok.*;
 
-import java.util.List;
-
 /**
  * @author Angel Zlatenov
  */
@@ -18,7 +16,8 @@ public class VideoDto {
     private String id;
     private String duration;
     private String name;
-    private List<String> teamNames;
+    private String homeTeamName;
+    private String awayTeamName;
     private String date;
 
 }

@@ -20,6 +20,8 @@ import java.util.Date;
 public class SearchOptions {
 
     private String videoName;
+    private String homeTeamName;
+    private String awayTeamName;
     private String channel;
     private String duration;
     private Date date;

@@ -138,8 +138,12 @@ public class StandingsServiceImpl implements StandingsService {
 
     @Override
     public List<StandingsServiceModel> getStandingsForDate(Date date) {
-        return standingsModelTransformer.transformEntitiesToStandingsServiceModels(
+        List<StandingsServiceModel> standingsServiceModels = standingsModelTransformer.transformEntitiesToStandingsServiceModels(
                 standingsRepository.findByDate(date));
+        standingsServiceModels.sort(
+                Comparator.comparing(standingsServiceModel -> standingsServiceModel.getStreak().getWinPercentage())
+        );
+        return standingsServiceModels;
     }
 
     private List<StandingsServiceModel> simulateStandingsForDate(Date date,

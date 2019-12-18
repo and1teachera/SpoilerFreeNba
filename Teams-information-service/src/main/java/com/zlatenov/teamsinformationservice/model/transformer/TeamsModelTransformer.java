@@ -101,6 +101,7 @@ public class TeamsModelTransformer {
                 .nickname(teamServiceModel.getNickName())
                 .confName(teamServiceModel.getConfName())
                 .divName(teamServiceModel.getDivName())
+                .playerDtos(playersModelTransformer.transformToPlayerDtos(teamServiceModel.getPlayers()))
                 .logo(teamServiceModel.getLogo())
                 .build();
     }

@@ -4,6 +4,7 @@ import com.zlatenov.nbastandingsservice.model.entity.Standings;
 import com.zlatenov.nbastandingsservice.model.response.StandingsResponseModel;
 import com.zlatenov.nbastandingsservice.model.service.StandingsServiceModel;
 import com.zlatenov.nbastandingsservice.model.service.Team;
+import com.zlatenov.spoilerfreesportsapi.model.dto.standings.StandingsDto;
 import com.zlatenov.spoilerfreesportsapi.model.pojo.Record;
 import com.zlatenov.spoilerfreesportsapi.model.pojo.Streak;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -111,4 +113,24 @@ public class StandingsModelTransformer {
                 .build();
     }
 
+    public List<StandingsDto> transformToStandingsDtos(List<StandingsServiceModel> standingsForDate) {
+        List<StandingsDto> standingsDtos = new ArrayList<>();
+        for (StandingsServiceModel standingsServiceModel : standingsForDate) {
+            StandingsDto standingsDto = transformToStandingsDto(standingsServiceModel);
+            standingsDto.setPosition(Integer.valueOf(standingsForDate.indexOf(standingsServiceModel) + 1).shortValue());
+            standingsDtos.add(standingsDto);
+        }
+        return standingsDtos;
+    }
+
+    private StandingsDto transformToStandingsDto(StandingsServiceModel standingsServiceModel) {
+        return StandingsDto.builder()
+                .teamName(standingsServiceModel.getTeam().getName())
+                .teamRecord(standingsServiceModel.getTeamRecord())
+                .conferenceRecord(standingsServiceModel.getConferenceRecord())
+                .divisionRecord(standingsServiceModel.getDivisionRecord())
+                .streak(standingsServiceModel.getStreak())
+                .date(standingsServiceModel.getDate())
+                .build();
+    }
 }

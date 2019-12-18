@@ -4,6 +4,7 @@ import com.zlatenov.spoilerfreeapp.model.binding.VideoBindingModel;
 import com.zlatenov.spoilerfreeapp.model.entity.Video;
 import com.zlatenov.spoilerfreeapp.model.service.VideoServiceModel;
 import com.zlatenov.spoilerfreeapp.model.view.VideoViewModel;
+import com.zlatenov.spoilerfreesportsapi.model.dto.video.VideoDto;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -67,5 +68,16 @@ public class VideoModelTransformer {
                 .videoId(videoServiceModel.getVideoId())
                 .name(videoServiceModel.getName())
                 .build();
+    }
+
+    public Video transformToVideo(VideoDto videoDto) {
+        return Video.builder()
+                .videoId(videoDto.getId())
+                .name(videoDto.getName())
+                .build();
+    }
+
+    public List<Video> transformToVideos(List<VideoDto> videoList) {
+        return videoList.stream().map(this::transformToVideo).collect(Collectors.toList());
     }
 }

@@ -21,4 +21,6 @@ public class Video {
     private String duration;
     private String name;
     private String channel;
+    private String homeTeamName;
+    private String awayTeamName;
 }

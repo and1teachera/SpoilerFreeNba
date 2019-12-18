@@ -11,8 +11,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.zlatenov.spoilerfreesportsapi.model.dto.game.GameDto;
-import com.zlatenov.spoilerfreesportsapi.model.dto.video.VideoDto;
-import com.zlatenov.spoilerfreesportsapi.model.dto.video.VideosDto;
+import com.zlatenov.spoilerfreesportsapi.model.dto.game.GamesDto;
 import com.zlatenov.videoproviderservice.auth.Auth;
 import com.zlatenov.videoproviderservice.model.Channel;
 import com.zlatenov.videoproviderservice.model.Game;
@@ -64,7 +63,7 @@ public class VideoService {
      *
      * @return
      */
-    public VideosDto getVideosForGame(GameDto gameDtoe) {
+    public List<Video> getVideosForGame(GameDto gameDtoe) {
         List<Channel> channels;
         try {
             channels = createListOfChannels();
@@ -74,17 +73,8 @@ public class VideoService {
         }
         List<SearchOptions> searchOptions = null;
         searchOptions = createSearchOptionsForGame(modelTransformer.transformDtoToGame(gameDtoe), channels);
-        List<Video> videoList = composeVideoList(searchOptions);
 
-        return VideosDto.builder().videoList(transformVideosToDtoList(videoList)).build();
-    }
-
-    private List<VideoDto> transformVideosToDtoList(List<Video> videoList) {
-        return videoList.stream().map(this::transformToVideoDto).collect(Collectors.toList());
-    }
-
-    private VideoDto transformToVideoDto(Video video) {
-        return VideoDto.builder().duration(video.getDuration()).id(video.getId()).build();
+        return composeVideoList(searchOptions);
     }
 
     private List<Video> composeVideoList(List<SearchOptions> searchOptions) {
@@ -119,6 +109,8 @@ public class VideoService {
                         .channel(channel.getId())
                         .date(game.getDate())
                         .videoName(videoName)
+                        .homeTeamName(game.getHomeTeamName())
+                        .awayTeamName(game.getAwayTeamName())
                         .duration(duration)
                         .build()));
         return searchOptions;
@@ -141,42 +133,26 @@ public class VideoService {
         }
 
         try {
-            // This object is used to make YouTube Data API requests. The last
-            // argument is required, but since we don't need anything
-            // initialized when the HttpRequest is initialized, we override
-            // the interface and provide a no-op function.
             youtube = new YouTube.Builder(Auth.HTTP_TRANSPORT, Auth.JSON_FACTORY, new HttpRequestInitializer() {
                 public void initialize(HttpRequest request) throws IOException {
                 }
             }).setApplicationName("youtube-cmdline-search-sample").build();
 
-            // Prompt the user to enter a query term.
-            //String queryTerm = String.format("%s %s Full Game Highlights",gameDto.getHomeTeamName(), gameDto.getAwayTeamName());
-
-            // Define the API request for retrieving search results.
             YouTube.Search.List search = youtube.search().list("id,snippet").setPublishedAfter(
                     new DateTime(searchOptions.getDate()));
 
-            // Set your developer key from the {{ Google Cloud Console }} for
-            // non-authenticated requests. See:
-            // {{ https://cloud.google.com/console }}
             String apiKey = properties.getProperty("youtube.apikey");
             search.setKey(apiKey);
             search.setQ(searchOptions.getVideoName());
             search.setVideoEmbeddable("true");
 
-            // Restrict the search results to only include videos. See:
-            // https://developers.google.com/youtube/v3/docs/search/list#type
             search.setType("video");
             search.setVideoDuration(searchOptions.getDuration());
             search.setChannelId(searchOptions.getChannel()); //UC8ndn9yAGs5L8NqKUBKzfyw
 
-            // To increase efficiency, only retrieve the fields that the
-            // application uses.
             search.setFields("items(id/kind,id/videoId,snippet/title,snippet/thumbnails/default/url)");
             search.setMaxResults(NUMBER_OF_VIDEOS_RETURNED);
 
-            // Call the API and print results.
             SearchListResponse searchResponse = search.execute();
             List<SearchResult> searchResultList = searchResponse.getItems();
             if (CollectionUtils.isNotEmpty(searchResultList)) {
@@ -185,6 +161,8 @@ public class VideoService {
                         .id(searchResult.getId().getVideoId())
                         .duration(searchOptions.getDuration())
                         .channel(searchOptions.getChannel())
+                        .homeTeamName(searchOptions.getHomeTeamName())
+                        .awayTeamName(searchOptions.getAwayTeamName())
                         .name(searchResult.getSnippet().getTitle())
                         .build();
             }
@@ -198,59 +176,10 @@ public class VideoService {
         }
         return null;
     }
-//
-//    /*
-//     * Prompt the user to enter a query term and return the user-specified term.
-//     */
-//    private static String getInputQuery() throws IOException {
-//
-//        String inputQuery = "";
-//
-//        System.out.print("Please enter a search term: ");
-//        BufferedReader bReader = new BufferedReader(new InputStreamReader(System.in));
-//        inputQuery = bReader.readLine();
-//
-//        if (inputQuery.length() < 1) {
-//            // Use the string "YouTube Developers Live" as a default.
-//            inputQuery = "YouTube Developers Live";
-//        }
-//        return inputQuery;
-//    }
 
-    /*
-     * Prints out all results in the Iterator. For each result, print the
-     * title, video ID, and thumbnail.
-     *
-     * @param iteratorSearchResults Iterator of SearchResults to print
-     *
-     * @param query Search query (String)
-     */
-//    private static void prettyPrint(Iterator<SearchResult> iteratorSearchResults, String query) {
-//
-//        System.out.println("\n=============================================================");
-//        System.out.println(
-//                "   First " + NUMBER_OF_VIDEOS_RETURNED + " videos for search on \"" + query + "\".");
-//        System.out.println("=============================================================\n");
-//
-//        if (!iteratorSearchResults.hasNext()) {
-//            System.out.println(" There aren't any results for your query.");
-//        }
-//
-//        while (iteratorSearchResults.hasNext()) {
-//
-//            SearchResult singleVideo = iteratorSearchResults.next();
-//            ResourceId rId = singleVideo.getId();
-//
-//            // Confirm that the result represents a video. Otherwise, the
-//            // item will not contain a video ID.
-//            if (rId.getKind().equals("youtube#video")) {
-//                Thumbnail thumbnail = singleVideo.getSnippet().getThumbnails().getDefault();
-//
-//                System.out.println(" Video Id:" + rId.getVideoId());
-//                System.out.println(" Title: " + singleVideo.getSnippet().getTitle());
-//                System.out.println(" Thumbnail: " + thumbnail.getUrl());
-//                System.out.println("\n-------------------------------------------------------------\n");
-//            }
-//        }
-//    }
+    public List<Video> getVideos(GamesDto gamesDto) {
+        return gamesDto.getGameDtos().stream()
+                .flatMap(gameDto -> getVideosForGame(gameDto).stream())
+                .collect(Collectors.toList());
+    }
 }

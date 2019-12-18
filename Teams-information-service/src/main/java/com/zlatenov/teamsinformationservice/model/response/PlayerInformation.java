@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 /**
  * @author Angel Zlatenov
  */
@@ -13,15 +15,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TeamResponseModel {
+public class PlayerInformation {
 
-    private String teamId;
-    private String shortName;
-    private String fullName;
-    private String nickname;
-    private String logo;
-    private String city;
-    private Leagues leagues;
-	private Integer nbaFranchise;
-
+    List<PlayerInfo> leagues;
 }

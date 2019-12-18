@@ -1,12 +1,10 @@
 package com.zlatenov.teamsinformationservice.model.service;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.util.List;
 
 /**
  * @author Angel Zlatenov
@@ -19,6 +17,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 @Builder
 public class TeamServiceModel {
 
+    private String id;
     private String shortName;
     private String fullName;
     private String nickName;
@@ -26,6 +25,8 @@ public class TeamServiceModel {
     private String city;
     private String confName;
     private String divName;
+
+    private List<PlayerServiceModel> players;
 
     @Override
     public boolean equals(Object o) {

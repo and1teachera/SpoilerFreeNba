@@ -15,7 +15,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RapidApiTeamsResponse {
+public class RapidApiTeamsResponseModel {
 
     private Integer status;
     private String message;

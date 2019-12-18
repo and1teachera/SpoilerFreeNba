@@ -13,15 +13,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TeamResponseModel {
-
-    private String teamId;
-    private String shortName;
-    private String fullName;
-    private String nickname;
-    private String logo;
-    private String city;
-    private Leagues leagues;
-	private Integer nbaFranchise;
-
+public class PlayerInfo {
+    private String jersey;
+    private String active;
+    private String pos;
 }

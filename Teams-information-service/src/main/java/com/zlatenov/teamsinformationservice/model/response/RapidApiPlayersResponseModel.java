@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 /**
  * @author Angel Zlatenov
  */
@@ -13,15 +15,13 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TeamResponseModel {
+public class RapidApiPlayersResponseModel {
 
-    private String teamId;
-    private String shortName;
-    private String fullName;
-    private String nickname;
-    private String logo;
-    private String city;
-    private Leagues leagues;
-	private Integer nbaFranchise;
+    private Integer status;
+    private String message;
+    private Integer results;
+    private List<String> filters;
+    private List<PlayerResponseModel> players;
+
 
 }

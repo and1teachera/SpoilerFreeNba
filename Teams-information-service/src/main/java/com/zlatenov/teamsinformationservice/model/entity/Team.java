@@ -1,14 +1,14 @@
 package com.zlatenov.teamsinformationservice.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import java.util.List;
 
 /**
  * @author Angel Zlatenov
@@ -29,6 +29,8 @@ public class Team extends BaseEntity {
     private String confName;
     private String divName;
 
+    @OneToMany(mappedBy = "team", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Player> players;
 
     @Override
     public boolean equals(Object o) {

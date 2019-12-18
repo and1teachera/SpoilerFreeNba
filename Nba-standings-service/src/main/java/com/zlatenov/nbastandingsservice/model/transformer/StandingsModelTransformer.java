@@ -1,4 +1,4 @@
-package com.zlatenov.nbastandingsservice.transformer;
+package com.zlatenov.nbastandingsservice.model.transformer;
 
 import com.zlatenov.nbastandingsservice.model.entity.Standings;
 import com.zlatenov.nbastandingsservice.model.response.StandingsResponseModel;
@@ -42,15 +42,15 @@ public class StandingsModelTransformer {
                               .build())
                 .teamRecord(Record.builder()
                                     .win(Short.valueOf(standingsResponseModel.getWin()))
-                                    .loss(Short.valueOf(standingsResponseModel.getLoss()))
+                                    .losses(Short.valueOf(standingsResponseModel.getLoss()))
                                     .build())
                 .conferenceRecord(Record.builder()
                                           .win(Short.valueOf(standingsResponseModel.getConference().getWin()))
-                                          .loss(Short.valueOf(standingsResponseModel.getConference().getLoss()))
+                                          .losses(Short.valueOf(standingsResponseModel.getConference().getLoss()))
                                           .build())
                 .divisionRecord(Record.builder()
                                         .win(Short.valueOf(standingsResponseModel.getDivision().getWin()))
-                                        .loss(Short.valueOf(standingsResponseModel.getDivision().getLoss()))
+                                        .losses(Short.valueOf(standingsResponseModel.getDivision().getLoss()))
                                         .build())
                 .streak(Streak.builder()
                                 .gamesBehind(Float.valueOf(standingsResponseModel.getGamesBehind()))
@@ -77,10 +77,10 @@ public class StandingsModelTransformer {
                 .division(standingsServiceModel.getTeam().getDivision())
                 .teamName(standingsServiceModel.getTeam().getName())
                 .wins(standingsServiceModel.getTeamRecord().getWin())
-                .losses(standingsServiceModel.getTeamRecord().getLoss())
+                .losses(standingsServiceModel.getTeamRecord().getLosses())
                 .conferenceWins(standingsServiceModel.getConferenceRecord().getWin())
-                .conferenceLosses(standingsServiceModel.getConferenceRecord().getLoss())
-                .divisionLosses(standingsServiceModel.getDivisionRecord().getLoss())
+                .conferenceLosses(standingsServiceModel.getConferenceRecord().getLosses())
+                .divisionLosses(standingsServiceModel.getDivisionRecord().getLosses())
                 .divisionWins(standingsServiceModel.getDivisionRecord().getWin())
                 .streak(standingsServiceModel.getStreak())
                 .build();
@@ -99,13 +99,13 @@ public class StandingsModelTransformer {
                               .conference(standings.getConference())
                               .division(standings.getDivision())
                               .build())
-                .teamRecord(Record.builder().win(standings.getWins()).loss(standings.getLosses()).build())
+                .teamRecord(Record.builder().win(standings.getWins()).losses(standings.getLosses()).build())
                 .conferenceRecord(Record.builder()
                                           .win(standings.getConferenceWins())
-                                          .loss(standings.getConferenceLosses())
+                                          .losses(standings.getConferenceLosses())
                                           .build())
                 .divisionRecord(
-                        Record.builder().win(standings.getDivisionWins()).loss(standings.getDivisionLosses()).build())
+                        Record.builder().win(standings.getDivisionWins()).losses(standings.getDivisionLosses()).build())
                 .streak(standings.getStreak())
                 .date(standings.getDate())
                 .build();

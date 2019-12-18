@@ -1,10 +1,18 @@
 package com.zlatenov.spoilerfreeapp.service;
 
+import com.zlatenov.spoilerfreeapp.exception.VideoNotAvailableException;
 import com.zlatenov.spoilerfreeapp.model.binding.LoginFormBindingModel;
 import com.zlatenov.spoilerfreeapp.model.binding.RegisterFormBindingModel;
 import com.zlatenov.spoilerfreeapp.model.binding.UserRoleBindingModel;
+import com.zlatenov.spoilerfreeapp.model.entity.User;
+import com.zlatenov.spoilerfreeapp.model.entity.Video;
 import com.zlatenov.spoilerfreeapp.model.enums.Role;
 import com.zlatenov.spoilerfreeapp.model.service.UserServiceModel;
+import com.zlatenov.spoilerfreeapp.model.service.VideoServiceModel;
+import com.zlatenov.spoilerfreeapp.model.transformer.UserModelTransformer;
+import com.zlatenov.spoilerfreeapp.model.transformer.VideoModelTransformer;
+import com.zlatenov.spoilerfreeapp.repository.UserRepository;
+import com.zlatenov.spoilerfreeapp.repository.VideoRepository;
 import com.zlatenov.spoilerfreesportsapi.model.dto.user.LogUserDto;
 import com.zlatenov.spoilerfreesportsapi.model.dto.user.RegisterUserDto;
 import com.zlatenov.spoilerfreesportsapi.model.dto.user.UserDto;
@@ -31,6 +39,10 @@ public class UserServiceImpl implements UserService {
     private final WebClient.Builder webClientBuilder;
     private final HttpSession httpSession;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private UserRepository userRepository;
+    private VideoRepository videoRepository;
+    private UserModelTransformer userModelTransformer;
+    private VideoModelTransformer videoModelTransformer;
 
     @Override
     public void logUser(LoginFormBindingModel loginForm) throws AuthorisationException {
@@ -78,8 +90,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserServiceModel findUserByUserName(String name) {
-        return null;
+    public UserServiceModel getUserByUserName(String name) throws AuthorisationException {
+        return userModelTransformer.transformToServiceModel(findUserByUserName(name));
+    }
+
+    public User findUserByUserName(String name) throws AuthorisationException {
+        return Optional.of(userRepository.findByUsername(name)).orElseThrow(AuthorisationException::new);
     }
 
     @Override
@@ -93,8 +109,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changeRole(UserServiceModel transformToServiceModel) {
-
+    public void changeRole(UserServiceModel userServiceModel) throws AuthorisationException {
+        User user = findUserByUserName(userServiceModel.getName());
+        user.setRole(userServiceModel.getRole());
+        userRepository.saveAndFlush(user);
     }
 
     private void addUserToSession(UserDto loggedUserDto) throws AuthorisationException {
@@ -104,5 +122,26 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(AuthorisationException::new);
 
         httpSession.setAttribute("role", role.toString());
+    }
+
+    @Override
+    public void addRemoveFromFavorites(VideoServiceModel videoServiceModel, String name) throws AuthorisationException, VideoNotAvailableException {
+        User user = Optional.of(userRepository.findByUsername(name))
+                .orElseThrow(AuthorisationException::new);
+        Video video = Optional.of(videoRepository.findByVideoId(videoServiceModel.getVideoId()))
+                .orElseThrow(VideoNotAvailableException::new);
+
+        List<Video> favoriteVideos = user.getFavoriteVideos();
+        if (favoriteVideos.contains(video)) {
+            favoriteVideos.remove(video);
+        } else {
+            favoriteVideos.add(video);
+        }
+        userRepository.saveAndFlush(user);
+    }
+
+    @Override
+    public List<VideoServiceModel> getFavourites(String username) throws AuthorisationException {
+        return videoModelTransformer.transformToServiceModels(findUserByUserName(username).getFavoriteVideos());
     }
 }

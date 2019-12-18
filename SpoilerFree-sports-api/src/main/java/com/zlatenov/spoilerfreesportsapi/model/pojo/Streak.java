@@ -53,7 +53,7 @@ public class Streak {
     }
 
     public void recalculatePct(Record teamRecord) {
-        winPercentage = teamRecord.getWin().floatValue() / (teamRecord.getWin() + teamRecord.getLoss());
-        lossPercentage = teamRecord.getLoss().floatValue() / (teamRecord.getWin() + teamRecord.getLoss());
+        winPercentage = teamRecord.getWin().floatValue() / (teamRecord.getWin() + teamRecord.getLosses());
+        lossPercentage = teamRecord.getLosses().floatValue() / (teamRecord.getWin() + teamRecord.getLosses());
     }
 }

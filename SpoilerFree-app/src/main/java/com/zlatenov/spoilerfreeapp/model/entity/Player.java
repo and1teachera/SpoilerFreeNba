@@ -17,4 +17,5 @@ import javax.persistence.Entity;
 public class Player extends BaseEntity {
 
     private String name;
+    private Team team;
 }

@@ -1,5 +1,6 @@
 package com.zlatenov.spoilerfreeapp.model.service;
 
+import com.zlatenov.spoilerfreeapp.model.enums.Role;
 import lombok.*;
 
 /**
@@ -14,4 +15,7 @@ import lombok.*;
 public class UserServiceModel {
 
     private String name;
+    private Role role;
+
+
 }

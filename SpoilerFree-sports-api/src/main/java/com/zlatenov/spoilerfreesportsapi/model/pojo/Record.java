@@ -20,18 +20,18 @@ import static com.zlatenov.spoilerfreesportsapi.util.Constants.ZERO;
 public class Record {
 
     private Short win;
-    private Short loss;
+    private Short losses;
 
     public void incrementNumberOfWins() {
         win = (short)  (win + 1);
     }
 
     public void incrementNumberOfLosses() {
-        loss = (short)  (loss + 1);
+        losses = (short)  (losses + 1);
     }
 
     public static Record createEmptyRecord() {
-        return Record.builder().win(ZERO).loss(ZERO).build();
+        return Record.builder().win(ZERO).losses(ZERO).build();
     }
 
 }

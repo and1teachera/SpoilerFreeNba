@@ -16,8 +16,6 @@ public interface StandingsService {
 
     List<StandingsServiceModel> getStandingsForDate(Date date);
 
-    List<StandingsServiceModel> fetchCurrentStandings();
-
     List<StandingsServiceModel> getStandingsInformation(String gameName, String date);
 
     List<StandingsServiceModel> getCurrentStandings();

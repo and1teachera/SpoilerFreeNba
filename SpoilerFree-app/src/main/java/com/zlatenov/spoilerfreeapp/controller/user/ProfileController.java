@@ -6,7 +6,8 @@ import com.zlatenov.spoilerfreeapp.model.service.UserServiceModel;
 import com.zlatenov.spoilerfreeapp.model.validator.UserEditValidator;
 import com.zlatenov.spoilerfreeapp.model.view.UserProfileViewModel;
 import com.zlatenov.spoilerfreeapp.service.UserService;
-import com.zlatenov.spoilerfreeapp.transformer.UserModelTransformer;
+import com.zlatenov.spoilerfreeapp.model.transformer.UserModelTransformer;
+import com.zlatenov.spoilerfreesportsapi.model.exception.AuthorisationException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -34,7 +35,12 @@ public class ProfileController extends BaseController {
     @PreAuthorize("isAuthenticated()")
     public ModelAndView profile(Principal principal, ModelAndView modelAndView,
                                 @ModelAttribute(name = "userBindingModel") UserEditBindingModel userBindingModel) {
-        UserServiceModel userServiceModel = this.userService.findUserByUserName(principal.getName());
+        UserServiceModel userServiceModel = null;
+        try {
+            userServiceModel = this.userService.getUserByUserName(principal.getName());
+        } catch (AuthorisationException e) {
+            e.printStackTrace();
+        }
         UserProfileViewModel userViewModel = userModelTransformer.transformUserToViewModel(userServiceModel);
         userBindingModel.setPassword(null);
         modelAndView.addObject("user", userBindingModel);

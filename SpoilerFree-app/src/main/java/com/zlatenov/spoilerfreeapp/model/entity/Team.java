@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,10 +22,14 @@ import javax.persistence.Entity;
 public class Team extends BaseEntity {
 
     private String shortName;
-    private String fullName;
     private String nickName;
+    private String fullName;
     private String logo;
     private String city;
     private String confName;
     private String divName;
+
+    @OneToMany(mappedBy = "team")
+    private List<Player> players;
+
 }

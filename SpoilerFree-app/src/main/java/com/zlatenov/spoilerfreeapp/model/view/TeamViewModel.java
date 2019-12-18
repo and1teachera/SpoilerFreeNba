@@ -16,6 +16,8 @@ public class TeamViewModel {
     private String fullName;
     private String shortName;
     private String nickName;
+    private String conference;
+    private String division;
     private String logo;
     private String city;
     private boolean isWatched;

@@ -2,7 +2,7 @@ package com.zlatenov.gamesinformationservice.controller;
 
 import com.zlatenov.gamesinformationservice.model.service.GameServiceModel;
 import com.zlatenov.gamesinformationservice.service.GamesInformationService;
-import com.zlatenov.gamesinformationservice.transformer.GamesModelTransformer;
+import com.zlatenov.gamesinformationservice.model.transformer.GamesModelTransformer;
 import com.zlatenov.spoilerfreesportsapi.model.dto.game.GamesDto;
 import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
 import lombok.AllArgsConstructor;

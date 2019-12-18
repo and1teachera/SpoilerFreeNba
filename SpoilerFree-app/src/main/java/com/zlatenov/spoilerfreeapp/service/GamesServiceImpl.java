@@ -3,16 +3,16 @@ package com.zlatenov.spoilerfreeapp.service;
 import com.zlatenov.spoilerfreeapp.model.entity.Game;
 import com.zlatenov.spoilerfreeapp.model.entity.Team;
 import com.zlatenov.spoilerfreeapp.model.service.GameServiceModel;
+import com.zlatenov.spoilerfreeapp.model.transformer.GamesModelTransformer;
 import com.zlatenov.spoilerfreeapp.repository.GamesRepository;
 import com.zlatenov.spoilerfreeapp.repository.TeamRepository;
-import com.zlatenov.spoilerfreeapp.transformer.GamesModelTransformer;
 import com.zlatenov.spoilerfreesportsapi.model.dto.game.GamesDto;
 import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
+import com.zlatenov.spoilerfreesportsapi.util.DateUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -39,23 +39,13 @@ public class GamesServiceImpl implements GameService {
                 .retrieve()
                 .bodyToMono(GamesDto.class)
                 .block();
-        try {
-            saveGamesInformation(gamesModelTransformer.transformToGamesList(Optional.ofNullable(gamesDto)
-                                                                                    .map(GamesDto::getGameDtos)
-                                                                                    .orElseThrow(
-                                                                                            UnresponsiveAPIException::new)));
-        }
-        catch (ParseException e) {
-            e.printStackTrace();
-        }
+        saveGamesInformation(gamesModelTransformer.transformToGamesList(Optional.ofNullable(gamesDto)
+                .map(GamesDto::getGameDtos)
+                .orElseThrow(
+                        UnresponsiveAPIException::new)));
     }
 
-    @Override
-    public List<GameServiceModel> getAllGames() {
-        return null;
-    }
-
-    private void saveGamesInformation(List<Game> games) throws ParseException {
+    private void saveGamesInformation(List<Game> games) {
         Map<String, List<Team>> teamToFullName = teamRepository.findAll()
                 .stream()
                 .collect(groupingBy(Team::getFullName));
@@ -63,7 +53,8 @@ public class GamesServiceImpl implements GameService {
         for (Game game : games) {
             String homeTeamFullName = game.getHomeTeam().getFullName();
             String awayTeamFullName = game.getAwayTeam().getFullName();
-            if (!teamToFullName.containsKey(homeTeamFullName) || !teamToFullName.containsKey(awayTeamFullName)) {
+            if (!teamToFullName.containsKey(homeTeamFullName) ||
+                    !teamToFullName.containsKey(awayTeamFullName)) {
                 continue;
             }
             game.setHomeTeam(teamToFullName.get(homeTeamFullName).get(0));
@@ -80,7 +71,9 @@ public class GamesServiceImpl implements GameService {
 
     @Override
     public List<GameServiceModel> getGamesForDate(Date date) {
-        return null;
+        Date start = Date.from(date.toInstant().minus(2, ChronoUnit.DAYS));
+        Date end = Date.from(date.toInstant().plus(3, ChronoUnit.DAYS));
+        return gamesModelTransformer.transformToServiceModels(gamesRepository.findAllByStartTimeUtcBetween(start, end));
     }
 
 //    @Override
@@ -102,12 +95,20 @@ public class GamesServiceImpl implements GameService {
     }
 
     @Override
-    public List<GameServiceModel> getGameInformation(String gameName, String date) {
-        return null;
+    public GameServiceModel getGameInformation(String gameName, String date) {
+        String homeTeamShortName = gameName.substring(0, 3);
+        String awayTeamShortName = gameName.substring(4, 6);
+        Team homeTeam = teamRepository.findByShortName(homeTeamShortName);
+        Team awayTeam = teamRepository.findByShortName(awayTeamShortName);
+        return gamesModelTransformer.transformToServiceModel(
+                gamesRepository.findByHomeTeamAndAwayTeamAndStartTimeUtc(homeTeam, awayTeam,
+                        DateUtil.parseDate(date)));
     }
 
     @Override
     public List<GameServiceModel> getGamesForTeam(String teamName) {
-        return null;
+        Team team = teamRepository.findByFullName(teamName);
+        return gamesModelTransformer.transformToServiceModels(
+                gamesRepository.findByHomeTeamOrAwayTeam(team, team));
     }
 }

@@ -6,7 +6,7 @@ import com.zlatenov.gamesinformationservice.model.response.RapidApiGamesResponse
 import com.zlatenov.gamesinformationservice.model.entity.Game;
 import com.zlatenov.gamesinformationservice.processor.ExternalAPIContentProcessor;
 import com.zlatenov.gamesinformationservice.repository.GameRepository;
-import com.zlatenov.gamesinformationservice.transformer.GamesModelTransformer;
+import com.zlatenov.gamesinformationservice.model.transformer.GamesModelTransformer;
 import com.zlatenov.spoilerfreesportsapi.model.dto.team.TeamDto;
 import com.zlatenov.spoilerfreesportsapi.model.dto.team.TeamsDto;
 import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;

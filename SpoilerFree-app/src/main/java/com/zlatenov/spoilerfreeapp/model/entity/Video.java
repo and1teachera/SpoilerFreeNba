@@ -1,9 +1,6 @@
 package com.zlatenov.spoilerfreeapp.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -12,7 +9,7 @@ import javax.persistence.ManyToOne;
 /**
  * @author Angel Zlatenov
  */
-
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

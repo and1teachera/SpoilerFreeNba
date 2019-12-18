@@ -18,5 +18,9 @@ public class TeamServiceModel {
     private String nickName;
     private String conference;
     private String division;
+    private String logo;
+    private String city;
+    private boolean isWatched;
+    private boolean isFavorite;
 
 }

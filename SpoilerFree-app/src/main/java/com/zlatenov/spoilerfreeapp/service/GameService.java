@@ -14,13 +14,11 @@ public interface GameService {
 
     void fetchAllGames() throws UnresponsiveAPIException;
 
-    List<GameServiceModel> getAllGames();
-
     List<GameServiceModel> getGamesForDate(Date date);
 
     List<Date> createDaysNavigationList(Date date);
 
-    List<GameServiceModel> getGameInformation(String gameName, String date);
+    GameServiceModel getGameInformation(String gameName, String date);
 
     List<GameServiceModel> getGamesForTeam(String teamName);
 }

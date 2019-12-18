@@ -1,4 +1,4 @@
-package com.zlatenov.nbastandingsservice.transformer;
+package com.zlatenov.nbastandingsservice.model.transformer;
 
 import com.zlatenov.nbastandingsservice.model.service.Game;
 import com.zlatenov.nbastandingsservice.model.service.GameInformation;

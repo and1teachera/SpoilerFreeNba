@@ -1,7 +1,7 @@
 package com.zlatenov.spoilerfreeapp.controller.basic;
 
 import com.zlatenov.spoilerfreeapp.service.StandingsService;
-import com.zlatenov.spoilerfreeapp.transformer.StandingsModelTransformer;
+import com.zlatenov.spoilerfreeapp.model.transformer.StandingsModelTransformer;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

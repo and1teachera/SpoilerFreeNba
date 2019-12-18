@@ -12,17 +12,11 @@ import java.util.List;
 
 public interface VideoService {
 
-    void addRemoveFromFavorites(VideoServiceModel videoServiceModel, String name);
-
     List<VideoServiceModel> getVideosForGame(GameServiceModel gameServiceModel);
 
     List<VideoServiceModel> getVideosForDate(Date date);
 
-    List<VideoServiceModel> getFavourites(String username);
+    void removeVideo(VideoServiceModel videoServiceModel);
 
-    void removeFavoriteVideo(VideoServiceModel transformToServiceModel);
-
-    void removeVideo(VideoServiceModel transformToServiceModel);
-
-    void addVideo(VideoServiceModel transformToServiceModel);
+    void addVideo(VideoServiceModel videoServiceModel);
 }

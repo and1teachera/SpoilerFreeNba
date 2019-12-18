@@ -1,4 +1,4 @@
-package com.zlatenov.gamesinformationservice.transformer;
+package com.zlatenov.gamesinformationservice.model.transformer;
 
 import com.zlatenov.gamesinformationservice.model.response.GameResponseModel;
 import com.zlatenov.gamesinformationservice.model.response.ScoreResponseModel;

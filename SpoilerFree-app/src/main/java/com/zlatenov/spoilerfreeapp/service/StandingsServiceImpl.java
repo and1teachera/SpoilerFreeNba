@@ -1,8 +1,15 @@
 package com.zlatenov.spoilerfreeapp.service;
 
+import com.zlatenov.spoilerfreeapp.model.entity.Team;
 import com.zlatenov.spoilerfreeapp.model.service.StandingsServiceModel;
+import com.zlatenov.spoilerfreeapp.model.transformer.StandingsModelTransformer;
+import com.zlatenov.spoilerfreeapp.repository.GamesRepository;
+import com.zlatenov.spoilerfreeapp.repository.StandingsRepository;
+import com.zlatenov.spoilerfreeapp.repository.TeamRepository;
 import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
+import com.zlatenov.spoilerfreesportsapi.util.DateUtil;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +18,12 @@ import java.util.List;
  */
 
 public class StandingsServiceImpl implements StandingsService {
+
+    private StandingsRepository standingsRepository;
+    private StandingsModelTransformer standingsModelTransformer;
+    private TeamRepository teamRepository;
+    private GamesRepository gamesRepository;
+
     @Override
     public void fetchAllStandings() throws UnresponsiveAPIException {
 
@@ -18,26 +31,30 @@ public class StandingsServiceImpl implements StandingsService {
 
     @Override
     public List<StandingsServiceModel> getStandingsForDate(Date date) {
-        return null;
-    }
-
-    @Override
-    public List<StandingsServiceModel> fetchCurrentStandings() {
-        return null;
+        return standingsModelTransformer.transformToServiceModels(standingsRepository.findByDate(date));
     }
 
     @Override
     public List<StandingsServiceModel> getStandingsInformation(String gameName, String date) {
-        return null;
+        String homeTeamShortName = gameName.substring(0, 3);
+        String awayTeamShortName = gameName.substring(4, 6);
+        Team homeTeam = teamRepository.findByShortName(homeTeamShortName);
+        Team awayTeam = teamRepository.findByShortName(awayTeamShortName);
+        return standingsModelTransformer.transformToServiceModels(
+                Arrays.asList(standingsRepository.findByTeamAndDate(homeTeam, DateUtil.parseDate(date)),
+                        standingsRepository.findByTeamAndDate(awayTeam, DateUtil.parseDate(date))));
     }
 
     @Override
     public List<StandingsServiceModel> getCurrentStandings() {
-        return null;
+        return standingsModelTransformer.transformToServiceModels(standingsRepository.findByDate(DateUtil.getCurrentDateWithoutTime()));
     }
 
     @Override
     public StandingsServiceModel getStandingsForTeam(String teamName) {
-        return null;
+        return standingsModelTransformer.transformToServiceModel(
+                standingsRepository.findByTeamAndDate(
+                        teamRepository.findByFullName(teamName),
+                        DateUtil.getCurrentDateWithoutTime()));
     }
 }

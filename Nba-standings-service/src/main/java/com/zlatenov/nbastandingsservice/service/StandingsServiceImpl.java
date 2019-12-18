@@ -7,19 +7,19 @@ import com.zlatenov.nbastandingsservice.model.response.TeamResponseModel;
 import com.zlatenov.nbastandingsservice.model.service.Game;
 import com.zlatenov.nbastandingsservice.model.service.StandingsServiceModel;
 import com.zlatenov.nbastandingsservice.model.service.Team;
+import com.zlatenov.nbastandingsservice.model.transformer.GamesTransformer;
+import com.zlatenov.nbastandingsservice.model.transformer.StandingsModelTransformer;
+import com.zlatenov.nbastandingsservice.model.transformer.TeamsTransformer;
 import com.zlatenov.nbastandingsservice.processor.ExternalAPIContentProcessor;
 import com.zlatenov.nbastandingsservice.repository.StandingsRepository;
-import com.zlatenov.nbastandingsservice.transformer.GamesTransformer;
-import com.zlatenov.nbastandingsservice.transformer.StandingsModelTransformer;
-import com.zlatenov.nbastandingsservice.transformer.TeamsTransformer;
-import com.zlatenov.spoilerfreesportsapi.model.pojo.Score;
 import com.zlatenov.spoilerfreesportsapi.model.dto.game.GameDto;
 import com.zlatenov.spoilerfreesportsapi.model.dto.game.GamesDto;
-import com.zlatenov.spoilerfreesportsapi.model.pojo.Record;
-import com.zlatenov.spoilerfreesportsapi.model.pojo.Streak;
 import com.zlatenov.spoilerfreesportsapi.model.dto.team.TeamDto;
 import com.zlatenov.spoilerfreesportsapi.model.dto.team.TeamsDto;
 import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
+import com.zlatenov.spoilerfreesportsapi.model.pojo.Record;
+import com.zlatenov.spoilerfreesportsapi.model.pojo.Score;
+import com.zlatenov.spoilerfreesportsapi.model.pojo.Streak;
 import lombok.AllArgsConstructor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -32,13 +32,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.zlatenov.spoilerfreesportsapi.util.DateUtil.getCurrentDateWithoutTime;
@@ -62,9 +56,6 @@ public class StandingsServiceImpl implements StandingsService {
     private final TeamsTransformer teamsTransformer;
 
     private final ModelMapper modelMapper;
-
-
-
 
     @Override
     public void initializeDatabase() throws IOException, UnresponsiveAPIException {

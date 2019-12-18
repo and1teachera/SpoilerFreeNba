@@ -4,7 +4,7 @@ import com.zlatenov.spoilerfreeapp.controller.basic.BaseController;
 import com.zlatenov.spoilerfreeapp.model.binding.VideoBindingModel;
 import com.zlatenov.spoilerfreeapp.model.view.VideoViewModel;
 import com.zlatenov.spoilerfreeapp.service.VideoService;
-import com.zlatenov.spoilerfreeapp.transformer.VideoModelTransformer;
+import com.zlatenov.spoilerfreeapp.model.transformer.VideoModelTransformer;
 import com.zlatenov.spoilerfreesportsapi.util.DateUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;

@@ -7,7 +7,7 @@ import com.zlatenov.teamsinformationservice.model.response.TeamResponseModel;
 import com.zlatenov.teamsinformationservice.model.service.TeamServiceModel;
 import com.zlatenov.teamsinformationservice.processor.ExternalAPIContentProcessor;
 import com.zlatenov.teamsinformationservice.repository.TeamRepository;
-import com.zlatenov.teamsinformationservice.transformer.TeamsModelTransformer;
+import com.zlatenov.teamsinformationservice.model.transformer.TeamsModelTransformer;
 import lombok.AllArgsConstructor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

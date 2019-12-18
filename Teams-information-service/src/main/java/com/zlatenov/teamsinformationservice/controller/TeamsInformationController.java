@@ -4,7 +4,7 @@ import com.zlatenov.spoilerfreesportsapi.model.dto.team.TeamsDto;
 import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
 import com.zlatenov.teamsinformationservice.model.service.TeamServiceModel;
 import com.zlatenov.teamsinformationservice.service.TeamsInformationService;
-import com.zlatenov.teamsinformationservice.transformer.TeamsModelTransformer;
+import com.zlatenov.teamsinformationservice.model.transformer.TeamsModelTransformer;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

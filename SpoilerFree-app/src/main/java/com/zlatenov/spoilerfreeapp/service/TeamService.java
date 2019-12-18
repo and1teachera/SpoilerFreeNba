@@ -1,5 +1,6 @@
 package com.zlatenov.spoilerfreeapp.service;
 
+import com.zlatenov.spoilerfreeapp.exception.TeamDoesntExistException;
 import com.zlatenov.spoilerfreeapp.model.service.PlayerServiceModel;
 import com.zlatenov.spoilerfreeapp.model.service.TeamServiceModel;
 import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
@@ -16,7 +17,7 @@ public interface TeamService {
 
     List<TeamServiceModel> getAllTeams();
 
-    List<PlayerServiceModel> getPlayersByTeamName(String teamName);
+    List<PlayerServiceModel> getPlayersByTeamName(String teamName) throws TeamDoesntExistException;
 
     void addRemoveFromWatched(String teamName);
 

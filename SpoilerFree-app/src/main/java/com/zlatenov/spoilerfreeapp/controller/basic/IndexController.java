@@ -1,7 +1,7 @@
 package com.zlatenov.spoilerfreeapp.controller.basic;
 
 import com.zlatenov.spoilerfreeapp.service.GameService;
-import com.zlatenov.spoilerfreeapp.transformer.GamesModelTransformer;
+import com.zlatenov.spoilerfreeapp.model.transformer.GamesModelTransformer;
 import com.zlatenov.spoilerfreesportsapi.util.DateUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;

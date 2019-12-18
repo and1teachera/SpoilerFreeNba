@@ -1,9 +1,11 @@
-package com.zlatenov.spoilerfreeapp.model.service;
+package com.zlatenov.spoilerfreeapp.model.entity;
+
 
 import com.zlatenov.spoilerfreesportsapi.model.pojo.Record;
-import com.zlatenov.spoilerfreesportsapi.model.pojo.Streak;
 import lombok.*;
 
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 import java.util.Date;
 
 /**
@@ -12,22 +14,24 @@ import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Getter
 @Setter
-public class StandingsServiceModel {
+@Entity
+@Builder
+public class Standings extends BaseEntity {
 
-    private TeamServiceModel team;
+    @OneToOne
+    private Team team;
     private Short index;
     private Short conferenceIndex;
     private Short divisionIndex;
     private Record record;
     private Record conferenceRecord;
     private Record divisionRecord;
+    private Short streak;
     private Float winPercentage;
     private Float lossPercentage;
-    private Streak streak;
+    private Short winStreak;
     private Date date;
-
 
 }

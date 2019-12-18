@@ -1,12 +1,11 @@
 package com.zlatenov.videoproviderservice.transformer;
 
 import com.zlatenov.spoilerfreesportsapi.model.dto.game.GameDto;
+import com.zlatenov.spoilerfreesportsapi.util.DateUtil;
 import com.zlatenov.videoproviderservice.model.Game;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 /**
  * @author Angel Zlatenov
@@ -16,13 +15,13 @@ import java.text.SimpleDateFormat;
 @AllArgsConstructor
 public class ModelTransformer {
 
-    private final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    private final ModelMapper modelMapper;
 
-    public Game transformDtoToGame(GameDto gameDto) throws ParseException {
+    public Game transformDtoToGame(GameDto gameDto) {
         return Game.builder()
                 .homeTeamName(gameDto.getHomeTeamName())
                 .awayTeamName(gameDto.getAwayTeamName())
-                .date(DATE_FORMAT.parse(gameDto.getDate()))
+                .date(DateUtil.parseDate(gameDto.getDate()))
                 .score(gameDto.getGameInformationDto().getScore())
                 .build();
     }

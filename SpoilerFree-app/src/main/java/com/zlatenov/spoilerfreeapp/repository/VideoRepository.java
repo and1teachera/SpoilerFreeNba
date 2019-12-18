@@ -8,4 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 
 public interface VideoRepository extends JpaRepository<Video, String> {
+
+    Video findByVideoId(String videoId);
+
+    void deleteByVideoId(String videoId);
 }

@@ -1,16 +1,19 @@
 package com.zlatenov.spoilerfreeapp.service;
 
+import com.zlatenov.spoilerfreeapp.exception.TeamDoesntExistException;
 import com.zlatenov.spoilerfreeapp.model.entity.Team;
 import com.zlatenov.spoilerfreeapp.model.service.PlayerServiceModel;
 import com.zlatenov.spoilerfreeapp.model.service.TeamServiceModel;
+import com.zlatenov.spoilerfreeapp.model.transformer.PlayersModelTransformer;
+import com.zlatenov.spoilerfreeapp.model.transformer.TeamModelTransformer;
 import com.zlatenov.spoilerfreeapp.repository.TeamRepository;
-import com.zlatenov.spoilerfreeapp.transformer.TeamModelTransformer;
 import com.zlatenov.spoilerfreesportsapi.model.dto.team.TeamsDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Angel Zlatenov
@@ -22,6 +25,7 @@ public class TeamServiceImpl implements TeamService {
     private final WebClient.Builder webClientBuilder;
     private final TeamRepository teamRepository;
     private final TeamModelTransformer teamModelTransformer;
+    private final PlayersModelTransformer playersModelTransformer;
 
     @Override
     public void fetchAllTeams() {
@@ -36,12 +40,16 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public List<TeamServiceModel> getAllTeams() {
-        return null;
+        return teamModelTransformer.transformToTeamServiceModels(teamRepository.findAll());
     }
 
     @Override
-    public List<PlayerServiceModel> getPlayersByTeamName(String teamName) {
-        return null;
+    public List<PlayerServiceModel> getPlayersByTeamName(String teamName) throws TeamDoesntExistException {
+        return playersModelTransformer.transformToServiceModels(findTeamByName(teamName).getPlayers());
+    }
+
+    private Team findTeamByName(String teamName) throws TeamDoesntExistException {
+        return Optional.ofNullable(teamRepository.findByFullName(teamName)).orElseThrow(TeamDoesntExistException::new);
     }
 
     private void saveTeamsInformation(TeamsDto teamsDto) {
@@ -54,14 +62,6 @@ public class TeamServiceImpl implements TeamService {
 //        return teamRepository.findAll();
 //    }
 
-//    public List<Player> getPlayersForTeam(TeamServiceModel teamServiceModel) {
-//        return getPlayersByTeamName(teamServiceModel.getFullName());
-//    }
-
-//    @Override
-//    public List<Player> getPlayersByTeamName(String teamName) {
-//        return null;
-//    }
 
     @Override
     public void addRemoveFromWatched(String teamName) {

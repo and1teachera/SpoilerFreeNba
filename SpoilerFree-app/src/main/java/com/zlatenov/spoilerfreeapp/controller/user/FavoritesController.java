@@ -1,9 +1,11 @@
 package com.zlatenov.spoilerfreeapp.controller.user;
 
 import com.zlatenov.spoilerfreeapp.controller.basic.BaseController;
+import com.zlatenov.spoilerfreeapp.exception.VideoNotAvailableException;
+import com.zlatenov.spoilerfreeapp.model.transformer.VideoModelTransformer;
 import com.zlatenov.spoilerfreeapp.model.view.VideoViewModel;
-import com.zlatenov.spoilerfreeapp.service.VideoService;
-import com.zlatenov.spoilerfreeapp.transformer.VideoModelTransformer;
+import com.zlatenov.spoilerfreeapp.service.UserService;
+import com.zlatenov.spoilerfreesportsapi.model.exception.AuthorisationException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -22,19 +24,30 @@ import java.security.Principal;
 @AllArgsConstructor
 public class FavoritesController extends BaseController {
 
-    private final VideoService videoService;
+    private UserService userService;
     private final VideoModelTransformer videoModelTransformer;
 
     @GetMapping(value = "/favorites")
+    @PreAuthorize("isAuthenticated()")
     public ModelAndView favorites(Principal principal, ModelAndView modelAndView) {
-        modelAndView.addObject("games",
-                videoModelTransformer.transformToViewModels(videoService.getFavourites(principal.getName())));
+        try {
+            modelAndView.addObject("games",
+                    videoModelTransformer.transformToViewModels(userService.getFavourites(principal.getName())));
+        } catch (AuthorisationException e) {
+            e.printStackTrace();
+        }
         return view("favorites", modelAndView);
     }
 
     @PostMapping
     @PreAuthorize("isAuthenticated()")
     public void addRemoveFromFavorites(Principal principal, @RequestParam("video") VideoViewModel video) {
-        videoService.addRemoveFromFavorites(videoModelTransformer.transformToServiceModel(video), principal.getName());
+        try {
+            userService.addRemoveFromFavorites(videoModelTransformer.transformToServiceModel(video), principal.getName());
+        } catch (AuthorisationException e) {
+            e.printStackTrace();
+        } catch (VideoNotAvailableException e) {
+            e.printStackTrace();
+        }
     }
 }

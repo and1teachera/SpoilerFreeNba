@@ -28,7 +28,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -69,18 +68,12 @@ public class VideoService {
         List<Channel> channels;
         try {
             channels = createListOfChannels();
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
             return null;
         }
         List<SearchOptions> searchOptions = null;
-        try {
-            searchOptions = createSearchOptionsForGame(modelTransformer.transformDtoToGame(gameDtoe), channels);
-        }
-        catch (ParseException e) {
-            e.printStackTrace();
-        }
+        searchOptions = createSearchOptionsForGame(modelTransformer.transformDtoToGame(gameDtoe), channels);
         List<Video> videoList = composeVideoList(searchOptions);
 
         return VideosDto.builder().videoList(transformVideosToDtoList(videoList)).build();
@@ -123,11 +116,11 @@ public class VideoService {
         String videoName = composeVideoName(game);
         channel.getDurations()
                 .forEach(duration -> searchOptions.add(SearchOptions.builder()
-                                                               .channel(channel.getId())
-                                                               .date(game.getDate())
-                                                               .videoName(videoName)
-                                                               .duration(duration)
-                                                               .build()));
+                        .channel(channel.getId())
+                        .date(game.getDate())
+                        .videoName(videoName)
+                        .duration(duration)
+                        .build()));
         return searchOptions;
     }
 
@@ -143,7 +136,7 @@ public class VideoService {
 
         } catch (IOException e) {
             System.err.println("There was an error reading " + PROPERTIES_FILENAME + ": " + e.getCause()
-                                       + " : " + e.getMessage());
+                    + " : " + e.getMessage());
             System.exit(1);
         }
 
@@ -197,7 +190,7 @@ public class VideoService {
             }
         } catch (GoogleJsonResponseException e) {
             System.err.println("There was a service error: " + e.getDetails().getCode() + " : "
-                                       + e.getDetails().getMessage());
+                    + e.getDetails().getMessage());
         } catch (IOException e) {
             System.err.println("There was an IO error: " + e.getCause() + " : " + e.getMessage());
         } catch (Throwable t) {

@@ -1,4 +1,4 @@
-package com.zlatenov.teamsinformationservice.transformer;
+package com.zlatenov.teamsinformationservice.model.transformer;
 
 import com.zlatenov.spoilerfreesportsapi.model.dto.team.TeamDto;
 import com.zlatenov.spoilerfreesportsapi.model.dto.team.TeamsDto;

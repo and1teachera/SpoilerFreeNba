@@ -1,8 +1,11 @@
 package com.zlatenov.spoilerfreeapp.service;
 
+import com.zlatenov.spoilerfreeapp.exception.TeamDoesntExistException;
+import com.zlatenov.spoilerfreeapp.exception.UserDoesntExistException;
 import com.zlatenov.spoilerfreeapp.exception.VideoNotAvailableException;
 import com.zlatenov.spoilerfreeapp.model.binding.LoginFormBindingModel;
 import com.zlatenov.spoilerfreeapp.model.binding.RegisterFormBindingModel;
+import com.zlatenov.spoilerfreeapp.model.binding.UserEditBindingModel;
 import com.zlatenov.spoilerfreeapp.model.binding.UserRoleBindingModel;
 import com.zlatenov.spoilerfreeapp.model.service.UserServiceModel;
 import com.zlatenov.spoilerfreeapp.model.service.VideoServiceModel;
@@ -21,7 +24,7 @@ public interface UserService {
 
     UserServiceModel getUserByUserName(String name) throws AuthorisationException;
 
-    void editUserProfile(UserServiceModel user);
+    void editUserProfile(UserEditBindingModel user, String name) throws UserDoesntExistException;
 
     List<UserRoleBindingModel> getUserRoleViewModels();
 
@@ -30,4 +33,8 @@ public interface UserService {
     void addRemoveFromFavorites(VideoServiceModel videoServiceModel, String name) throws AuthorisationException, VideoNotAvailableException;
 
     List<VideoServiceModel> getFavourites(String username) throws AuthorisationException;
+
+    void addRemoveFromWatchedTeams(String teamName, String username) throws TeamDoesntExistException, UserDoesntExistException;
+
+    void addRemoveFromFavoriteTeams(String teamName, String username) throws TeamDoesntExistException, UserDoesntExistException;
 }

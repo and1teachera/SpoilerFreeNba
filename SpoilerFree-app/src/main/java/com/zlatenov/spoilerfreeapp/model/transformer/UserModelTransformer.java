@@ -9,6 +9,9 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * @author Angel Zlatenov
  */
@@ -42,6 +45,17 @@ public class UserModelTransformer {
         return UserServiceModel.builder()
                 .name(user.getUsername())
                 .role(user.getRole())
+                .build();
+    }
+
+    public List<UserRoleBindingModel> transformUserRoleViewModels(List<User> users) {
+        return users.stream().map(this::transformUserRoleViewModel).collect(Collectors.toList());
+    }
+
+    public UserRoleBindingModel transformUserRoleViewModel(User user) {
+        return UserRoleBindingModel.builder()
+                .username(user.getUsername())
+                .role(user.getRole().toString())
                 .build();
     }
 }

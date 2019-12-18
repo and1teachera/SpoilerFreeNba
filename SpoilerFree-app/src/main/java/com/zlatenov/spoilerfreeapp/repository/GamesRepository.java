@@ -18,4 +18,6 @@ public interface GamesRepository extends JpaRepository<Game, String> {
     List<Game> findByHomeTeamOrAwayTeam(Team team, Team team2);
 
     Game findByHomeTeamAndAwayTeamAndStartTimeUtc(Team homeTeam, Team awayTeam, Date date);
+
+    List<Game> findByStartTimeUtc(Date date);
 }

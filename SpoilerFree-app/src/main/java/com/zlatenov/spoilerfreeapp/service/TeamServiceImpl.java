@@ -61,15 +61,4 @@ public class TeamServiceImpl implements TeamService {
 //    public List<Team> getAllTeams() {
 //        return teamRepository.findAll();
 //    }
-
-
-    @Override
-    public void addRemoveFromWatched(String teamName) {
-
-    }
-
-    @Override
-    public void addRemoveFromFavorite(String teamName) {
-
-    }
 }

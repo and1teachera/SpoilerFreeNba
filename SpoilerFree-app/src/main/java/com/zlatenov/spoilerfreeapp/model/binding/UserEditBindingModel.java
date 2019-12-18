@@ -16,4 +16,7 @@ public class UserEditBindingModel {
     private String password;
     private String newPassword;
     private String confirmPassword;
+    private String email;
+    private Integer age;
+    private String country;
 }

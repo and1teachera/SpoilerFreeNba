@@ -1,9 +1,13 @@
 package com.zlatenov.spoilerfreeapp.service;
 
+import com.zlatenov.spoilerfreeapp.exception.TeamDoesntExistException;
+import com.zlatenov.spoilerfreeapp.exception.UserDoesntExistException;
 import com.zlatenov.spoilerfreeapp.exception.VideoNotAvailableException;
 import com.zlatenov.spoilerfreeapp.model.binding.LoginFormBindingModel;
 import com.zlatenov.spoilerfreeapp.model.binding.RegisterFormBindingModel;
+import com.zlatenov.spoilerfreeapp.model.binding.UserEditBindingModel;
 import com.zlatenov.spoilerfreeapp.model.binding.UserRoleBindingModel;
+import com.zlatenov.spoilerfreeapp.model.entity.Team;
 import com.zlatenov.spoilerfreeapp.model.entity.User;
 import com.zlatenov.spoilerfreeapp.model.entity.Video;
 import com.zlatenov.spoilerfreeapp.model.enums.Role;
@@ -11,8 +15,10 @@ import com.zlatenov.spoilerfreeapp.model.service.UserServiceModel;
 import com.zlatenov.spoilerfreeapp.model.service.VideoServiceModel;
 import com.zlatenov.spoilerfreeapp.model.transformer.UserModelTransformer;
 import com.zlatenov.spoilerfreeapp.model.transformer.VideoModelTransformer;
+import com.zlatenov.spoilerfreeapp.repository.TeamRepository;
 import com.zlatenov.spoilerfreeapp.repository.UserRepository;
 import com.zlatenov.spoilerfreeapp.repository.VideoRepository;
+import com.zlatenov.spoilerfreesportsapi.model.dto.user.EditUserDto;
 import com.zlatenov.spoilerfreesportsapi.model.dto.user.LogUserDto;
 import com.zlatenov.spoilerfreesportsapi.model.dto.user.RegisterUserDto;
 import com.zlatenov.spoilerfreesportsapi.model.dto.user.UserDto;
@@ -41,6 +47,7 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private UserRepository userRepository;
     private VideoRepository videoRepository;
+    private TeamRepository teamRepository;
     private UserModelTransformer userModelTransformer;
     private VideoModelTransformer videoModelTransformer;
 
@@ -57,9 +64,9 @@ public class UserServiceImpl implements UserService {
                 .body(Mono.just(authenticateUserDto), LogUserDto.class)
                 .retrieve()
                 .onStatus(HttpStatus::is4xxClientError,
-                          clientResponse -> clientResponse
-                                  .bodyToMono(String.class)
-                                  .map(AuthenticationException::new))
+                        clientResponse -> clientResponse
+                                .bodyToMono(String.class)
+                                .map(AuthenticationException::new))
                 .bodyToMono(UserDto.class)
                 .block();
 
@@ -80,9 +87,9 @@ public class UserServiceImpl implements UserService {
                 .body(Mono.just(registerUserDto), RegisterUserDto.class)
                 .retrieve()
                 .onStatus(HttpStatus::is4xxClientError,
-                          clientResponse -> clientResponse
-                                  .bodyToMono(String.class)
-                                  .map(AuthenticationException::new))
+                        clientResponse -> clientResponse
+                                .bodyToMono(String.class)
+                                .map(AuthenticationException::new))
                 .bodyToMono(UserDto.class)
                 .block();
 
@@ -99,13 +106,36 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void editUserProfile(UserServiceModel user) {
+    public void editUserProfile(UserEditBindingModel userEditBindingModel, String username) throws UserDoesntExistException {
+        User user = getUser(username);
 
+        String email = userEditBindingModel.getEmail() != null ? userEditBindingModel.getEmail() : user.getEmail();
+        Integer age = userEditBindingModel.getAge() != null ? userEditBindingModel.getAge() : user.getAge();
+        String country = userEditBindingModel.getCountry() != null ? userEditBindingModel.getCountry() : user.getCountry();
+
+        EditUserDto editUserDto = EditUserDto.builder()
+                .age(age)
+                .country(userEditBindingModel.getCountry())
+                .email(userEditBindingModel.getEmail())
+                .username(username)
+                .password(bCryptPasswordEncoder.encode(userEditBindingModel.getPassword()))
+                .build();
+
+        webClientBuilder.build()
+                .post()
+                .uri("localhost:8081/editProfile")
+                .body(Mono.just(editUserDto), EditUserDto.class);
+
+        user.setEmail(email);
+        user.setAge(age);
+        user.setCountry(country);
+
+        userRepository.saveAndFlush(user);
     }
 
     @Override
     public List<UserRoleBindingModel> getUserRoleViewModels() {
-        return null;
+        return userModelTransformer.transformUserRoleViewModels(userRepository.findAll());
     }
 
     @Override
@@ -143,5 +173,42 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<VideoServiceModel> getFavourites(String username) throws AuthorisationException {
         return videoModelTransformer.transformToServiceModels(findUserByUserName(username).getFavoriteVideos());
+    }
+
+    @Override
+    public void addRemoveFromWatchedTeams(String teamName, String username) throws TeamDoesntExistException, UserDoesntExistException {
+        Team team = getTeam(teamName);
+        User user = getUser(username);
+        List<Team> watchedTeams = user.getWatchedTeams();
+        if (watchedTeams.contains(team)) {
+            watchedTeams.remove(team);
+        } else {
+            watchedTeams.add(team);
+        }
+
+        userRepository.saveAndFlush(user);
+
+    }
+
+    private User getUser(String username) throws UserDoesntExistException {
+        return Optional.of(userRepository.findByUsername(username)).orElseThrow(UserDoesntExistException::new);
+    }
+
+    private Team getTeam(String teamName) throws TeamDoesntExistException {
+        return Optional.of(teamRepository.findByFullName(teamName)).orElseThrow(TeamDoesntExistException::new);
+    }
+
+    @Override
+    public void addRemoveFromFavoriteTeams(String teamName, String username) throws TeamDoesntExistException, UserDoesntExistException {
+        Team team = getTeam(teamName);
+        User user = getUser(username);
+        List<Team> favoriteTeams = user.getFavoriteTeams();
+        if (favoriteTeams.contains(team)) {
+            favoriteTeams.remove(team);
+        } else {
+            favoriteTeams.add(team);
+        }
+
+        userRepository.saveAndFlush(user);
     }
 }

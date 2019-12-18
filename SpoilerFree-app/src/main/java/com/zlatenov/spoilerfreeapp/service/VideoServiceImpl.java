@@ -28,12 +28,16 @@ public class VideoServiceImpl implements VideoService {
 
     @Override
     public List<VideoServiceModel> getVideosForGame(GameServiceModel gameServiceModel) {
-        return null;
+        return videoModelTransformer.transformToServiceModels(videoRepository.findByGame(gamesRepository.findByHomeTeamAndAwayTeamAndStartTimeUtc(
+                teamRepository.findByFullName(gameServiceModel.getHomeTeam().getFullName()),
+                teamRepository.findByFullName(gameServiceModel.getAwayTeam().getFullName()),
+                gameServiceModel.getDate())));
     }
 
     @Override
     public List<VideoServiceModel> getVideosForDate(Date date) {
-        return null;
+        return videoModelTransformer.transformToServiceModels(
+                videoRepository.findByGameIn(gamesRepository.findByStartTimeUtc(date)));
     }
 
 

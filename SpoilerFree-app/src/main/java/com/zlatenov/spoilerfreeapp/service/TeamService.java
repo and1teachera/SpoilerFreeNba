@@ -18,8 +18,4 @@ public interface TeamService {
     List<TeamServiceModel> getAllTeams();
 
     List<PlayerServiceModel> getPlayersByTeamName(String teamName) throws TeamDoesntExistException;
-
-    void addRemoveFromWatched(String teamName);
-
-    void addRemoveFromFavorite(String teamName);
 }

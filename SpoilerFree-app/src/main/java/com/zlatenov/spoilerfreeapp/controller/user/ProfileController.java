@@ -1,6 +1,7 @@
 package com.zlatenov.spoilerfreeapp.controller.user;
 
 import com.zlatenov.spoilerfreeapp.controller.basic.BaseController;
+import com.zlatenov.spoilerfreeapp.exception.UserDoesntExistException;
 import com.zlatenov.spoilerfreeapp.model.binding.UserEditBindingModel;
 import com.zlatenov.spoilerfreeapp.model.service.UserServiceModel;
 import com.zlatenov.spoilerfreeapp.model.validator.UserEditValidator;
@@ -52,7 +53,7 @@ public class ProfileController extends BaseController {
     @PreAuthorize("isAuthenticated()")
     public ModelAndView editProfile(ModelAndView modelAndView,
                                     @ModelAttribute(name = "userBindingModel") UserEditBindingModel userBindingModel,
-                                           BindingResult bindingResult) {
+                                           BindingResult bindingResult, Principal principal) {
         this.userEditValidator.validate(userBindingModel, bindingResult);
 
         if (bindingResult.hasErrors()) {
@@ -64,7 +65,11 @@ public class ProfileController extends BaseController {
             return view("profile", modelAndView);
         }
 
-        this.userService.editUserProfile(userModelTransformer.transformToServiceModel(userBindingModel));
+        try {
+            this.userService.editUserProfile(userBindingModel, principal.getName());
+        } catch (UserDoesntExistException e) {
+            e.printStackTrace();
+        }
 
         return view("profile", modelAndView);
     }

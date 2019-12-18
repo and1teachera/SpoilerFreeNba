@@ -39,7 +39,7 @@ public class FavoritesController extends BaseController {
         return view("favorites", modelAndView);
     }
 
-    @PostMapping
+    @PostMapping("/addRemoveFromFavorites")
     @PreAuthorize("isAuthenticated()")
     public void addRemoveFromFavorites(Principal principal, @RequestParam("video") VideoViewModel video) {
         try {

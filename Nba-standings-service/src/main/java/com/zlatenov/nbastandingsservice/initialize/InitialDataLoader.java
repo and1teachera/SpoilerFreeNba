@@ -7,7 +7,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
-import java.text.ParseException;
+import java.io.IOException;
 
 /**
  * @author Angel Zlatenov
@@ -21,10 +21,10 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         try {
-            //standingsService.initializeDatabase();
-            standingsService.calculateStandings();
+            standingsService.initializeDatabase();
+            //standingsService.calculateStandings();
         }
-        catch (/*IOException |*/ UnresponsiveAPIException | ParseException e) {
+        catch (IOException | UnresponsiveAPIException  e) {
             e.printStackTrace();
         }
     }

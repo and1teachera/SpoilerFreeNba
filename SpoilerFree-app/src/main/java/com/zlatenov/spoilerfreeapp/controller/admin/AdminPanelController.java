@@ -26,12 +26,12 @@ public class AdminPanelController extends BaseController {
 
     @GetMapping(value = "/admin/panel")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_ADMIN')")
-    public ModelAndView adminPanel(ModelAndView modelAndView) {
+    public ModelAndView panel(ModelAndView modelAndView) {
         modelAndView.addObject("users", userService.getUserRoleViewModels());
         return view("adminPanel", modelAndView);
     }
 
-    @PostMapping
+    @PostMapping(value = "/admin/panel")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_ADMIN')")
     public void changeRole(@RequestParam("userRoleBindingModel") UserRoleBindingModel userRoleBindingModel) {
         try {

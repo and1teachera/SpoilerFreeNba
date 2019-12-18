@@ -29,7 +29,7 @@ public class LoginController extends BaseController {
         return view("login", modelAndView);
     }
 
-    @PostMapping
+    @PostMapping("login")
     public ModelAndView login(ModelAndView modelAndView, @ModelAttribute(name = "loginForm") LoginFormBindingModel loginForm,
                               BindingResult bindingResult) {
 

@@ -49,7 +49,7 @@ public class GameVideosController extends BaseController {
         return view("gameVideos", modelAndView);
     }
 
-    @PostMapping
+    @PostMapping("/saveVideo")
     @PreAuthorize("isAuthenticated()")
     public void addRemoveFromSaved(@RequestParam("video") VideoViewModel video, Principal principal) {
         try {

@@ -50,7 +50,7 @@ public class DayController extends BaseController {
         return view("day", modelAndView);
     }
 
-    @PostMapping
+    @PostMapping("/favoriteVideo")
     @PreAuthorize("isAuthenticated()")
     public void addRemoveFromFavorites(@RequestParam("video") VideoViewModel video, Principal principal) {
         try {

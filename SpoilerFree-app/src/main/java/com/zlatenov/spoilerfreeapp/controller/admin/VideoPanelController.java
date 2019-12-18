@@ -34,13 +34,13 @@ public class VideoPanelController extends BaseController {
         return view("videoPanel", modelAndView);
     }
 
-    @PostMapping
+    @PostMapping(value = "/admin/videoPanel/remove")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_ADMIN')")
     public void removeVideo(@RequestParam("video") VideoViewModel videoViewModel) {
         videoService.removeVideo(videoModelTransformer.transformToServiceModel(videoViewModel));
     }
 
-    @PostMapping
+    @PostMapping(value = "/admin/videoPanel/add")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_ADMIN')")
     public void addVideo(@RequestParam("video") VideoBindingModel videoBindingModel) {
         videoService.addVideo(videoModelTransformer.transformToServiceModel(videoBindingModel));

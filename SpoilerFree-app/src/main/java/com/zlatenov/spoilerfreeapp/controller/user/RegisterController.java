@@ -1,10 +1,11 @@
 package com.zlatenov.spoilerfreeapp.controller.user;
 
 import com.zlatenov.spoilerfreeapp.controller.basic.BaseController;
-import com.zlatenov.spoilerfreesportsapi.model.exception.AuthorisationException;
 import com.zlatenov.spoilerfreeapp.model.binding.RegisterFormBindingModel;
 import com.zlatenov.spoilerfreeapp.service.UserServiceImpl;
+import com.zlatenov.spoilerfreesportsapi.model.exception.AuthorisationException;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +20,7 @@ public class RegisterController extends BaseController {
     private final UserServiceImpl userService;
 
     @GetMapping(value = "/register")
-//    @PreAuthorize("isAnonymous()")
+    @PreAuthorize("isAnonymous()")
     public ModelAndView register(ModelAndView modelAndView, @ModelAttribute(name = "registerForm")
             RegisterFormBindingModel registerForm) {
         modelAndView.addObject("registerForm", registerForm);
@@ -27,8 +28,8 @@ public class RegisterController extends BaseController {
         return view("register", modelAndView);
     }
 
-    @PostMapping
-//    @PreAuthorize("isAnonymous()")
+    @PostMapping("/register")
+    @PreAuthorize("isAnonymous()")
     public ModelAndView registerConfirm(ModelAndView modelAndView, @ModelAttribute(name = "registerForm")
             RegisterFormBindingModel registerForm, BindingResult bindingResult) {
 

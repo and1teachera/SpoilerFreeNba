@@ -6,6 +6,7 @@ import com.zlatenov.spoilerfreeapp.model.service.StandingsServiceModel;
 import com.zlatenov.spoilerfreeapp.model.view.DayStandingsModel;
 import com.zlatenov.spoilerfreeapp.model.view.StandingsViewModel;
 import com.zlatenov.spoilerfreesportsapi.model.dto.standings.StandingsDto;
+import com.zlatenov.spoilerfreesportsapi.model.pojo.Record;
 import com.zlatenov.spoilerfreesportsapi.model.pojo.Streak;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -68,9 +69,14 @@ public class StandingsModelTransformer {
                 .index(standings.getIndex())
                 .conferenceIndex(standings.getIndex())
                 .divisionIndex(standings.getIndex())
-                .record(standings.getRecord())
-                .conferenceRecord(standings.getConferenceRecord())
-                .divisionRecord(standings.getDivisionRecord())
+                .record(Record.builder()
+                        .win(standings.getWins())
+                        .losses(standings.getLosses())
+                        .build())
+                .conferenceRecord(Record.builder()
+                        .win(standings.getConferenceWins()).losses(standings.getConferenceLosses()).build())
+                .divisionRecord(Record.builder()
+                        .win(standings.getDivisionWins()).losses(standings.getDivisionLosses()).build())
                 .winPercentage(standings.getWinPercentage())
                 .lossPercentage(standings.getLossPercentage())
                 .streak(Streak.builder().streak(standings.getStreak()).winStreak(standings.getWinStreak()).build())
@@ -86,9 +92,12 @@ public class StandingsModelTransformer {
         return Standings.builder()
                 .team(Team.builder().fullName(standingsDto.getTeamName()).build())
                 .index(standingsDto.getPosition())
-                .record(standingsDto.getTeamRecord())
-                .conferenceRecord(standingsDto.getConferenceRecord())
-                .divisionRecord(standingsDto.getDivisionRecord())
+                .wins(standingsDto.getTeamRecord().getWin())
+                .losses(standingsDto.getTeamRecord().getLosses())
+                .conferenceWins(standingsDto.getConferenceRecord().getWin())
+                .conferenceLosses(standingsDto.getConferenceRecord().getLosses())
+                .divisionWins(standingsDto.getDivisionRecord().getWin())
+                .divisionLosses(standingsDto.getDivisionRecord().getLosses())
                 .winPercentage(standingsDto.getStreak().getWinPercentage())
                 .lossPercentage(standingsDto.getStreak().getLossPercentage())
                 .streak(standingsDto.getStreak().getStreak())

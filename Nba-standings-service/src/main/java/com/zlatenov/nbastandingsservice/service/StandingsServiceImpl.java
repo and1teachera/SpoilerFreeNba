@@ -66,20 +66,7 @@ public class StandingsServiceImpl implements StandingsService {
 
         if (CollectionUtils.isEmpty(teamServiceModelsFromDB)) {
             saveStandings(standingsServiceModels);
-            return;
         }
-//
-//        if (standingsServiceModels.containsAll(teamServiceModelsFromDB)
-//                && standingsServiceModels.size() == teamServiceModelsFromDB.size()) {
-//            return;
-//        }
-//        Collection<StandingsServiceModel> commonElements = CollectionUtils.intersection(teamServiceModelsFromDB,
-//                                                                                        standingsServiceModels);
-//
-//        teamServiceModelsFromDB.removeAll(commonElements);
-//        standingsRepository.deleteAll(standingsModelTransformer.transformToStandingsEntities(teamServiceModelsFromDB));
-//        standingsServiceModels.removeAll(commonElements);
-//        saveStandings(standingsServiceModels);
     }
 
     private void saveStandings(List<StandingsServiceModel> standingsServiceModels) {

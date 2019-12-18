@@ -33,7 +33,7 @@ public class IndexController extends BaseController {
         return view("index", modelAndView);
     }
 
-    @PostMapping
+    @PostMapping("/selectDate")
     public void date(@RequestParam("date") String date, ModelAndView modelAndView) {
         Date selectedDate = DateUtil.parseDate(date);
         modelAndView.addObject("games", gamesModelTransformer.transformToGameViewModels(

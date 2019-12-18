@@ -1,7 +1,6 @@
 package com.zlatenov.spoilerfreeapp.model.entity;
 
 
-import com.zlatenov.spoilerfreesportsapi.model.pojo.Record;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -25,9 +24,12 @@ public class Standings extends BaseEntity {
     private Short index;
     private Short conferenceIndex;
     private Short divisionIndex;
-    private Record record;
-    private Record conferenceRecord;
-    private Record divisionRecord;
+    private Short wins;
+    private Short losses;
+    private Short conferenceWins;
+    private Short conferenceLosses;
+    private Short divisionWins;
+    private Short divisionLosses;
     private Short streak;
     private Float winPercentage;
     private Float lossPercentage;

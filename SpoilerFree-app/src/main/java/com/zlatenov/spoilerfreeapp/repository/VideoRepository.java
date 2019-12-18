@@ -4,7 +4,6 @@ import com.zlatenov.spoilerfreeapp.model.entity.Game;
 import com.zlatenov.spoilerfreeapp.model.entity.Video;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -18,8 +17,6 @@ public interface VideoRepository extends JpaRepository<Video, String> {
     List<Video> findByGame(Game game);
 
     void deleteByVideoId(String videoId);
-
-    List<Video> findByDate(Date date);
 
     List<Video> findByGameIn(List<Game> games);
 }

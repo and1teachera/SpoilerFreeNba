@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Component
 @AllArgsConstructor
 public class PlayersModelTransformer {
-    
+
     public PlayerServiceModel transformToServiceModel(Player player) {
         return PlayerServiceModel.builder()
                 .firstName(player.getFirstName())
@@ -64,7 +64,7 @@ public class PlayersModelTransformer {
                 .position(playerServiceModel.getPosition())
                 .country(playerServiceModel.getCountry())
                 .collegeName(playerServiceModel.getCollegeName())
-                .dateOfBirth(playerServiceModel.getDateOfBirth().toString())
+                .dateOfBirth(playerServiceModel.getDateOfBirth() != null ? playerServiceModel.getDateOfBirth().toString() : null)
                 .heightInMeters(playerServiceModel.getHeightInMeters())
                 .weightInKilograms(playerServiceModel.getWeightInKilograms())
                 .jersey(playerServiceModel.getJersey())

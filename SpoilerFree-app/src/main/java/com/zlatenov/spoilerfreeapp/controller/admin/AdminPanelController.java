@@ -8,6 +8,7 @@ import com.zlatenov.spoilerfreesportsapi.model.exception.AuthorisationException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,12 +34,16 @@ public class AdminPanelController extends BaseController {
 
     @PostMapping(value = "/admin/panel")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_ADMIN')")
-    public void changeRole(@RequestParam("userRoleBindingModel") UserRoleBindingModel userRoleBindingModel) {
-        try {
-            userService.changeRole(userModelTransformer.transformToServiceModel(userRoleBindingModel));
-        } catch (AuthorisationException e) {
-            e.printStackTrace();
-        }
+    public void changeRole(@RequestParam("userRoleBindingModel") UserRoleBindingModel userRoleBindingModel) throws AuthorisationException {
+        userService.changeRole(userModelTransformer.transformToServiceModel(userRoleBindingModel));
+    }
+
+    @ExceptionHandler(AuthorisationException.class)
+    public ModelAndView authorisation(ModelAndView modelAndView){
+        modelAndView.setViewName("error");
+        modelAndView.addObject("message", "You are not allowed to see this page!");
+
+        return view("error", modelAndView);
     }
 
 }

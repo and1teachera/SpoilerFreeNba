@@ -18,7 +18,6 @@ public class StandingsController extends BaseController {
     private final StandingsService standingsService;
     private final StandingsModelTransformer standingsModelTransformer;
 
-
     @GetMapping(value = "/standings")
     public ModelAndView standings(ModelAndView modelAndView) {
         modelAndView.addObject("standings", standingsModelTransformer.transformServiceModelsToViews(

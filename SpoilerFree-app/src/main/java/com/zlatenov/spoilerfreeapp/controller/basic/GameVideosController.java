@@ -1,23 +1,20 @@
 package com.zlatenov.spoilerfreeapp.controller.basic;
 
 import com.zlatenov.spoilerfreeapp.exception.VideoNotAvailableException;
+import com.zlatenov.spoilerfreeapp.model.transformer.GamesModelTransformer;
+import com.zlatenov.spoilerfreeapp.model.transformer.StandingsModelTransformer;
+import com.zlatenov.spoilerfreeapp.model.transformer.VideoModelTransformer;
 import com.zlatenov.spoilerfreeapp.model.view.VideoViewModel;
 import com.zlatenov.spoilerfreeapp.service.GameService;
 import com.zlatenov.spoilerfreeapp.service.StandingsService;
 import com.zlatenov.spoilerfreeapp.service.UserService;
 import com.zlatenov.spoilerfreeapp.service.VideoService;
-import com.zlatenov.spoilerfreeapp.model.transformer.GamesModelTransformer;
-import com.zlatenov.spoilerfreeapp.model.transformer.StandingsModelTransformer;
-import com.zlatenov.spoilerfreeapp.model.transformer.VideoModelTransformer;
 import com.zlatenov.spoilerfreesportsapi.model.exception.AuthorisationException;
 import com.zlatenov.spoilerfreesportsapi.util.DateUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.security.Principal;
@@ -51,14 +48,25 @@ public class GameVideosController extends BaseController {
 
     @PostMapping("/saveVideo")
     @PreAuthorize("isAuthenticated()")
-    public void addRemoveFromSaved(@RequestParam("video") VideoViewModel video, Principal principal) {
-        try {
-            userService.addRemoveFromFavorites(videoModelTransformer.transformToServiceModel(video), principal.getName());
-        } catch (AuthorisationException e) {
-            e.printStackTrace();
-        } catch (VideoNotAvailableException e) {
-            e.printStackTrace();
-        }
+    public void addRemoveFromSaved(@RequestParam("video") VideoViewModel video, Principal principal)
+            throws AuthorisationException, VideoNotAvailableException {
+        userService.addRemoveFromFavorites(videoModelTransformer.transformToServiceModel(video), principal.getName());
+    }
+
+    @ExceptionHandler(AuthorisationException.class)
+    public ModelAndView authorisation(ModelAndView modelAndView){
+        modelAndView.setViewName("error");
+        modelAndView.addObject("message", "Please log to perform those actions!");
+
+        return view("error", modelAndView);
+    }
+
+    @ExceptionHandler(VideoNotAvailableException.class)
+    public ModelAndView videoNotFound(ModelAndView modelAndView){
+        modelAndView.setViewName("error");
+        modelAndView.addObject("message", "Selected video is not found!");
+
+        return view("error", modelAndView);
     }
 
 }

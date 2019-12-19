@@ -120,4 +120,30 @@ public class VideoServiceImpl implements VideoService {
         }
         videoRepository.saveAll(videos);
     }
+
+    @Override
+    public void fetchVideosForTodayGames() throws UnresponsiveAPIException {
+        Date today = DateUtil.getCurrentDateWithoutTime();
+        Date yesterday = Date.from(today.toInstant().minus(1, ChronoUnit.DAYS));
+        Date tomorrow = Date.from(today.toInstant().plus(1, ChronoUnit.DAYS));
+
+        GamesDto gamesDto = GamesDto.builder()
+                .gameDtos(gamesModelTransformer.transformToGameDtos(
+                        gamesRepository.findAllByStartTimeUtcBetween(yesterday, tomorrow)))
+                .build();
+
+        VideosDto videosDto = webClientBuilder.build()
+                .post()
+                .uri("localhost:8084/videos")
+                .body(Mono.just(gamesDto), GamesDto.class)
+                .retrieve()
+                .bodyToMono(VideosDto.class)
+                .block();
+
+        if (videosDto == null) {
+            throw new UnresponsiveAPIException();
+        }
+
+        saveVideos(videosDto.getVideoList());
+    }
 }

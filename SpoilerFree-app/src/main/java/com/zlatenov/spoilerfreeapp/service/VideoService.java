@@ -24,4 +24,6 @@ public interface VideoService {
     void fetchVideos() throws UnresponsiveAPIException;
 
     List<VideoServiceModel> getAllVideos();
+
+    void fetchVideosForTodayGames() throws UnresponsiveAPIException;
 }

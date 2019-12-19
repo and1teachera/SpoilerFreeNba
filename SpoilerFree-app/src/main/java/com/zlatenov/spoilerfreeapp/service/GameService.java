@@ -23,4 +23,6 @@ public interface GameService {
     List<GameServiceModel> getGamesForTeam(String teamName);
 
     List<GameServiceModel> getAllGames();
+
+    void fetchGamesForDate(Date date) throws UnresponsiveAPIException;
 }

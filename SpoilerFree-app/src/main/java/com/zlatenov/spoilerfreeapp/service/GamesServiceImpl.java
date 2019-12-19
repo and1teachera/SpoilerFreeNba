@@ -12,6 +12,7 @@ import com.zlatenov.spoilerfreesportsapi.util.DateUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -76,15 +77,6 @@ public class GamesServiceImpl implements GameService {
         return gamesModelTransformer.transformToServiceModels(gamesRepository.findAllByStartTimeUtcBetween(start, end));
     }
 
-//    @Override
-//    public List<GameViewModel> getGameViewModelsForDate(Date date) {
-//        Date start = Date.from(date.toInstant().minus(2, ChronoUnit.DAYS));
-//        Date end = Date.from(date.toInstant().plus(3, ChronoUnit.DAYS));
-//        return gamesModelTransformer.transformToGameViewModels(
-//                gamesRepository.findAllByStartTimeUtcBetween(start, end));
-//        return null;
-//    }
-
     @Override
     public List<Date> createDaysNavigationList(Date date) {
         Instant instant = date.toInstant();
@@ -115,5 +107,21 @@ public class GamesServiceImpl implements GameService {
     @Override
     public List<GameServiceModel> getAllGames() {
         return gamesModelTransformer.transformToServiceModels(gamesRepository.findAll());
+    }
+
+
+    @Override
+    public void fetchGamesForDate(Date date) throws UnresponsiveAPIException {
+        GamesDto gamesDto = webClientBuilder.build()
+                .post()
+                .uri("localhost:8083/games")
+                .body(Mono.just(date), Date.class)
+                .retrieve()
+                .bodyToMono(GamesDto.class)
+                .block();
+        saveGamesInformation(gamesModelTransformer.transformToGamesList(Optional.ofNullable(gamesDto)
+                .map(GamesDto::getGameDtos)
+                .orElseThrow(
+                        UnresponsiveAPIException::new)));
     }
 }

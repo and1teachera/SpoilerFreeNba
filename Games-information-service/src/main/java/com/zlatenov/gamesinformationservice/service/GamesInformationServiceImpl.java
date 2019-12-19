@@ -1,12 +1,12 @@
 package com.zlatenov.gamesinformationservice.service;
 
-import com.zlatenov.gamesinformationservice.model.response.GameResponseModel;
-import com.zlatenov.gamesinformationservice.model.service.GameServiceModel;
-import com.zlatenov.gamesinformationservice.model.response.RapidApiGamesResponse;
 import com.zlatenov.gamesinformationservice.model.entity.Game;
+import com.zlatenov.gamesinformationservice.model.response.GameResponseModel;
+import com.zlatenov.gamesinformationservice.model.response.RapidApiGamesResponse;
+import com.zlatenov.gamesinformationservice.model.service.GameServiceModel;
+import com.zlatenov.gamesinformationservice.model.transformer.GamesModelTransformer;
 import com.zlatenov.gamesinformationservice.processor.ExternalAPIContentProcessor;
 import com.zlatenov.gamesinformationservice.repository.GameRepository;
-import com.zlatenov.gamesinformationservice.model.transformer.GamesModelTransformer;
 import com.zlatenov.spoilerfreesportsapi.model.dto.team.TeamDto;
 import com.zlatenov.spoilerfreesportsapi.model.dto.team.TeamsDto;
 import com.zlatenov.spoilerfreesportsapi.model.exception.UnresponsiveAPIException;
@@ -20,9 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.IOException;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -45,18 +42,17 @@ public class GamesInformationServiceImpl implements GamesInformationService {
     private List<GameServiceModel> initGames() throws IOException, UnresponsiveAPIException {
         List<GameServiceModel> gameServiceModels = initGamesData();
 
-        ZonedDateTime zonedDateTime = ZonedDateTime.parse("2019-07-01T23:00:00.000Z");
-        Date utc = Date.from(zonedDateTime.withZoneSameInstant(ZoneId.of(ZoneOffset.UTC.getId())).toInstant());
-
-        ZonedDateTime sofia = zonedDateTime.withZoneSameInstant(ZoneId.of("Europe/Sofia"));
-        ZonedDateTime customZone = zonedDateTime.toInstant().atZone(ZoneOffset.UTC);
-
         return gameServiceModels;
     }
 
     @Override
     public List<GameServiceModel> getAllGames() {
         return gamesModelTransformer.transformEntitiesToGameServiceModels(gameRepository.findAll());
+    }
+
+    @Override
+    public List<GameServiceModel> getGamesForDate(Date date) {
+        return gamesModelTransformer.transformEntitiesToGameServiceModels(gameRepository.findGamesByStartTimeUtc(date));
     }
 
     private ResponseBody fetchGamesDataFromExternalAPI() throws IOException, UnresponsiveAPIException {
@@ -81,11 +77,7 @@ public class GamesInformationServiceImpl implements GamesInformationService {
     }
 
     @Override
-    public void initializeDatabase() throws IOException, UnresponsiveAPIException {
-        initializeGamesInformation();
-    }
-
-    private void initializeGamesInformation() throws IOException, UnresponsiveAPIException {
+    public void fetchGamesFromApi() throws IOException, UnresponsiveAPIException {
         List<GameServiceModel> gameServiceModels = initGamesData();
 
         List<GameServiceModel> gameServiceModelsFromDB = gamesModelTransformer.transformEntitiesToGameServiceModels(
@@ -103,7 +95,7 @@ public class GamesInformationServiceImpl implements GamesInformationService {
             return;
         }
         Collection<GameServiceModel> commonElements = CollectionUtils.intersection(gameServiceModelsFromDB,
-                                                                                   gameServiceModels);
+                gameServiceModels);
 
         gameServiceModelsFromDB.removeAll(commonElements);
         gameRepository.deleteAll(gamesModelTransformer.transformToGameEntities(gameServiceModelsFromDB));

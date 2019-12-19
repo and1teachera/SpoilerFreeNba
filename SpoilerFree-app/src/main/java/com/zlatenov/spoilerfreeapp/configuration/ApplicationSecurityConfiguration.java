@@ -17,13 +17,11 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http.cors()
-                .disable()
-                .csrf()
-                .disable()
+        http
+                .cors().disable()
+                .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/js/**", "/css/**")
-                .permitAll()
+                .antMatchers("/js/**", "/css/**").permitAll()
                 //.antMatchers("", "", "", "")
                 //.authenticated()
                 .antMatchers("/admin/**").hasAnyRole(String.valueOf(ADMIN))

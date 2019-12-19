@@ -84,8 +84,8 @@ public class VideoServiceImpl implements VideoService {
     @Override
     public void fetchVideos() throws UnresponsiveAPIException {
         Date today = DateUtil.getCurrentDateWithoutTime();
-        Date beforeThreeDays = Date.from(today.toInstant().minus(3, ChronoUnit.DAYS));
-        List<Game> games = gamesRepository.findAllByStartTimeUtcBetween(beforeThreeDays, today);
+        Date beforeTwoDays = Date.from(today.toInstant().minus(2, ChronoUnit.DAYS));
+        List<Game> games = gamesRepository.findAllByStartTimeUtcBetween(beforeTwoDays, today);
         GamesDto gamesDto = GamesDto.builder()
                 .gameDtos(gamesModelTransformer.transformToGameDtos(games))
                 .build();

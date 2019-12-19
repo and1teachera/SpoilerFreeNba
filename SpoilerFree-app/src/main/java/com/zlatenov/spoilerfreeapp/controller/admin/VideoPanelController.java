@@ -31,7 +31,7 @@ public class VideoPanelController extends BaseController {
     public ModelAndView videoPanel(@PathVariable("date") String date, ModelAndView modelAndView) {
         modelAndView.addObject("videos", videoModelTransformer.transformToViewModels(
                 videoService.getVideosForDate(DateUtil.parseDate(date))));
-        return view("videoPanel", modelAndView);
+        return view("admin/videoPanel", modelAndView);
     }
 
     @PostMapping(value = "/admin/videoPanel/remove")

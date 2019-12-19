@@ -30,7 +30,7 @@ public class IndexController extends BaseController {
         modelAndView.addObject("games", gamesModelTransformer.transformToGameViewModels(gamesService.getGamesForDate(currentDate)));
         modelAndView.addObject("date", currentDate);
         modelAndView.addObject("days", gamesService.createDaysNavigationList(currentDate));
-        return view("index", modelAndView);
+        return view("basic/index", modelAndView);
     }
 
     @PostMapping("/selectDate")

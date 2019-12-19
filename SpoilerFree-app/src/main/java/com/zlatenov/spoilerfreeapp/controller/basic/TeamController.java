@@ -32,7 +32,7 @@ public class TeamController extends BaseController {
     private final StandingsModelTransformer standingsModelTransformer;
     private final TeamService teamService;
 
-    @GetMapping(value = "/{teamName}")
+    @GetMapping(value = "/team/{teamName}")
     public ModelAndView players(ModelAndView modelAndView, @PathVariable("teamName") String teamName) {
         modelAndView.addObject("games",
                 gamesModelTransformer.transformToGameViewModels(gamesService.getGamesForTeam(teamName)));
@@ -44,7 +44,7 @@ public class TeamController extends BaseController {
         modelAndView.addObject("watched", standingsViewModel.getTeam().isWatched());
         modelAndView.addObject("favorite", standingsViewModel.getTeam().isFavorite());
 
-        return view("team", modelAndView);
+        return view("basic/team", modelAndView);
     }
 
     @PostMapping
@@ -63,17 +63,15 @@ public class TeamController extends BaseController {
 
     @ExceptionHandler(UserDoesntExistException.class)
     public ModelAndView authorisation(ModelAndView modelAndView){
-        modelAndView.setViewName("error");
         modelAndView.addObject("message", "Please log to perform those actions!");
 
-        return view("error", modelAndView);
+        return view("basic/error", modelAndView);
     }
 
     @ExceptionHandler(TeamDoesntExistException.class)
     public ModelAndView videoNotFound(ModelAndView modelAndView){
-        modelAndView.setViewName("error");
         modelAndView.addObject("message", "Selected team is not found!");
 
-        return view("error", modelAndView);
+        return view("basic/error", modelAndView);
     }
 }

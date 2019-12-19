@@ -13,6 +13,6 @@ public class LogoutController extends BaseController {
     @GetMapping(value = "/logout")
     public ModelAndView logout(HttpSession session) {
         session.invalidate();
-        return super.redirect("login");
+        return super.redirect("basic/login");
     }
 }

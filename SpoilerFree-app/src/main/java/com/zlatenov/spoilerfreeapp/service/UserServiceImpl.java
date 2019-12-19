@@ -26,7 +26,6 @@ import com.zlatenov.spoilerfreesportsapi.model.exception.AuthorisationException;
 import lombok.AllArgsConstructor;
 import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -44,18 +43,18 @@ public class UserServiceImpl implements UserService {
 
     private final WebClient.Builder webClientBuilder;
     private final HttpSession httpSession;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private UserRepository userRepository;
     private VideoRepository videoRepository;
     private TeamRepository teamRepository;
     private UserModelTransformer userModelTransformer;
     private VideoModelTransformer videoModelTransformer;
+    private HashingService hashingService;
 
     @Override
     public void logUser(LoginFormBindingModel loginForm) throws AuthorisationException {
         LogUserDto authenticateUserDto = LogUserDto.builder()
                 .username(loginForm.getUsername())
-                .password(bCryptPasswordEncoder.encode(loginForm.getPassword()))
+                .password(hashingService.hash(loginForm.getPassword()))
                 .build();
 
         UserDto loggedUserDto = webClientBuilder.build()
@@ -77,7 +76,7 @@ public class UserServiceImpl implements UserService {
     public void registerUser(RegisterFormBindingModel registerForm) throws AuthorisationException {
         RegisterUserDto registerUserDto = RegisterUserDto.builder()
                 .username(registerForm.getUsername())
-                .password(bCryptPasswordEncoder.encode(registerForm.getPassword()))
+                .password(hashingService.hash(registerForm.getPassword()))
                 .email(registerForm.getEmail())
                 .build();
 
@@ -118,7 +117,7 @@ public class UserServiceImpl implements UserService {
                 .country(userEditBindingModel.getCountry())
                 .email(userEditBindingModel.getEmail())
                 .username(username)
-                .password(bCryptPasswordEncoder.encode(userEditBindingModel.getPassword()))
+                .password(hashingService.hash(userEditBindingModel.getPassword()))
                 .build();
 
         webClientBuilder.build()

@@ -26,7 +26,7 @@ public class LoginController extends BaseController {
                               @ModelAttribute(name = "loginForm") LoginFormBindingModel loginForm) {
         session.invalidate();
         modelAndView.addObject("loginForm", loginForm);
-        return view("login", modelAndView);
+        return view("user/login", modelAndView);
     }
 
     @PostMapping("login")
@@ -37,7 +37,7 @@ public class LoginController extends BaseController {
             loginForm.setPassword(null);
             modelAndView.addObject("loginForm", loginForm);
 
-            return view("login", modelAndView);
+            return view("user/login", modelAndView);
         }
         try {
             userService.logUser(loginForm);
@@ -46,7 +46,7 @@ public class LoginController extends BaseController {
             bindingResult.addError(new ObjectError("Login Error", e.getMessage()));
             modelAndView.addObject("loginForm", loginForm);
 
-            return view("login", modelAndView);
+            return view("user/login", modelAndView);
         }
 
         return redirect("/index");

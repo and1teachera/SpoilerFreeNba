@@ -33,7 +33,7 @@ public class FavoritesController extends BaseController {
     public ModelAndView favorites(Principal principal, ModelAndView modelAndView) throws AuthorisationException {
             modelAndView.addObject("games",
                     videoModelTransformer.transformToViewModels(userService.getFavourites(principal.getName())));
-        return view("favorites", modelAndView);
+        return view("user/favorites", modelAndView);
     }
 
     @PostMapping("/addRemoveFromFavorites")
@@ -45,17 +45,15 @@ public class FavoritesController extends BaseController {
 
     @ExceptionHandler(AuthorisationException.class)
     public ModelAndView authorisation(ModelAndView modelAndView){
-        modelAndView.setViewName("error");
         modelAndView.addObject("message", "Please log to perform those actions!");
 
-        return view("error", modelAndView);
+        return view("basic/error", modelAndView);
     }
 
     @ExceptionHandler(VideoNotAvailableException.class)
     public ModelAndView videoNotFound(ModelAndView modelAndView){
-        modelAndView.setViewName("error");
         modelAndView.addObject("message", "Selected video is not found!");
 
-        return view("error", modelAndView);
+        return view("basic/error", modelAndView);
     }
 }

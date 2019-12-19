@@ -22,6 +22,6 @@ public class StandingsController extends BaseController {
     public ModelAndView standings(ModelAndView modelAndView) {
         modelAndView.addObject("standings", standingsModelTransformer.transformServiceModelsToViews(
                 standingsService.getCurrentStandings()));
-        return view("standings", modelAndView);
+        return view("basic/standings", modelAndView);
     }
 }

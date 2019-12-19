@@ -43,7 +43,7 @@ public class GameVideosController extends BaseController {
                 standingsService.getStandingsInformation(gameName, date)));
         modelAndView.addObject("videoList", videoModelTransformer.transformToViewModels(videoService.getVideosForDate(
                 DateUtil.parseDate(date))));
-        return view("gameVideos", modelAndView);
+        return view("basic/gameVideos", modelAndView);
     }
 
     @PostMapping("/saveVideo")
@@ -55,18 +55,16 @@ public class GameVideosController extends BaseController {
 
     @ExceptionHandler(AuthorisationException.class)
     public ModelAndView authorisation(ModelAndView modelAndView){
-        modelAndView.setViewName("error");
         modelAndView.addObject("message", "Please log to perform those actions!");
 
-        return view("error", modelAndView);
+        return view("basic/error", modelAndView);
     }
 
     @ExceptionHandler(VideoNotAvailableException.class)
     public ModelAndView videoNotFound(ModelAndView modelAndView){
-        modelAndView.setViewName("error");
         modelAndView.addObject("message", "Selected video is not found!");
 
-        return view("error", modelAndView);
+        return view("basic/error", modelAndView);
     }
 
 }

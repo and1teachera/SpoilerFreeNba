@@ -25,7 +25,7 @@ public class RegisterController extends BaseController {
             RegisterFormBindingModel registerForm) {
         modelAndView.addObject("registerForm", registerForm);
 
-        return view("register", modelAndView);
+        return view("user/register", modelAndView);
     }
 
     @PostMapping("/register")
@@ -38,14 +38,14 @@ public class RegisterController extends BaseController {
             registerForm.setConfirmPassword(null);
             modelAndView.addObject("registerForm", registerForm);
 
-            return view("register", modelAndView);
+            return view("user/register", modelAndView);
         }
 
         try {
             this.userService.registerUser(registerForm);
         }
         catch (AuthorisationException e) {
-            return view("register", modelAndView);
+            return view("user/register", modelAndView);
         }
 
         return redirect("/login");

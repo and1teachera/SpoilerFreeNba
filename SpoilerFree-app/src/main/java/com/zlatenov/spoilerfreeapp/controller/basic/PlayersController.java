@@ -25,14 +25,13 @@ public class PlayersController extends BaseController {
     public ModelAndView players(ModelAndView modelAndView, @PathVariable("teamName") String teamName) throws TeamDoesntExistException {
         modelAndView.addObject("players",
                     teamModelTransformer.transformToPlayersViewModel(teamService.getPlayersByTeamName(teamName)));
-        return view("players", modelAndView);
+        return view("basic/players", modelAndView);
     }
 
     @ExceptionHandler(TeamDoesntExistException.class)
     public ModelAndView videoNotFound(ModelAndView modelAndView){
-        modelAndView.setViewName("error");
         modelAndView.addObject("message", "Selected team is not found!");
 
-        return view("error", modelAndView);
+        return view("basic/error", modelAndView);
     }
 }

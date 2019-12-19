@@ -164,6 +164,7 @@ public class VideoService {
                         .homeTeamName(searchOptions.getHomeTeamName())
                         .awayTeamName(searchOptions.getAwayTeamName())
                         .name(searchResult.getSnippet().getTitle())
+                        .date(searchOptions.getDate().toString())
                         .build();
             }
         } catch (GoogleJsonResponseException e) {

@@ -72,9 +72,8 @@ public class GamesServiceImpl implements GameService {
 
     @Override
     public List<GameServiceModel> getGamesForDate(Date date) {
-        Date start = Date.from(date.toInstant().minus(2, ChronoUnit.DAYS));
-        Date end = Date.from(date.toInstant().plus(3, ChronoUnit.DAYS));
-        return gamesModelTransformer.transformToServiceModels(gamesRepository.findAllByStartTimeUtcBetween(start, end));
+        Date start = Date.from(date.toInstant().minus(1, ChronoUnit.DAYS));
+        return gamesModelTransformer.transformToServiceModels(gamesRepository.findByStartTimeUtc(start));
     }
 
     @Override

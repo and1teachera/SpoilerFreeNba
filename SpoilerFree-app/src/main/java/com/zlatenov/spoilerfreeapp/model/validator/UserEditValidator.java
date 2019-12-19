@@ -1,6 +1,7 @@
 package com.zlatenov.spoilerfreeapp.model.validator;
 
 import com.zlatenov.spoilerfreeapp.model.binding.UserEditBindingModel;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -17,7 +18,9 @@ public class UserEditValidator implements Validator {
     }
 
     public void validate(Object target, Errors errors) {
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "field.required");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "surname", "field.required");
+        if (!StringUtils.equals(((UserEditBindingModel) target).getPassword(), ((UserEditBindingModel) target).getConfirmPassword())) {
+            errors.reject("fields.not.match");
+        }
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "field.required");
     }
 }

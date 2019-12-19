@@ -12,7 +12,6 @@ import com.zlatenov.spoilerfreeapp.service.VideoService;
 import com.zlatenov.spoilerfreesportsapi.model.exception.AuthorisationException;
 import com.zlatenov.spoilerfreesportsapi.util.DateUtil;
 import lombok.AllArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -36,7 +35,7 @@ public class DayController extends BaseController {
     private final UserService userService;
 
 
-    @GetMapping("/{date}")
+    @GetMapping("/date/{date}")
     public ModelAndView day(@PathVariable("date") String date, ModelAndView modelAndView) {
         modelAndView.addObject("games", gamesModelTransformer.transformToGameViewModels(
                 gamesService.getGamesForDate(DateUtil.parseDate(date))));
@@ -44,11 +43,11 @@ public class DayController extends BaseController {
                 standingsService.getStandingsForDate(DateUtil.parseDate(date))));
         modelAndView.addObject("videoList", videoService.getVideosForDate(
                 DateUtil.parseDate(date)));
-        return view("day", modelAndView);
+        return view("basic/day", modelAndView);
     }
 
     @PostMapping("/favoriteVideo")
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     public void addRemoveFromFavorites(@RequestParam("video") VideoViewModel video, Principal principal)
             throws AuthorisationException, VideoNotAvailableException {
         userService.addRemoveFromFavorites(videoModelTransformer.transformToServiceModel(video), principal.getName());
@@ -56,18 +55,16 @@ public class DayController extends BaseController {
 
     @ExceptionHandler(AuthorisationException.class)
     public ModelAndView authorisation(ModelAndView modelAndView){
-        modelAndView.setViewName("error");
         modelAndView.addObject("message", "Please log to perform those actions!");
 
-        return view("error", modelAndView);
+        return view("basic/error", modelAndView);
     }
 
     @ExceptionHandler(VideoNotAvailableException.class)
     public ModelAndView videoNotFound(ModelAndView modelAndView){
-        modelAndView.setViewName("error");
         modelAndView.addObject("message", "Selected video is not found!");
 
-        return view("error", modelAndView);
+        return view("basic/error", modelAndView);
     }
 
 }

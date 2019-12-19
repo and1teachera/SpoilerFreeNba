@@ -29,7 +29,7 @@ public class AdminPanelController extends BaseController {
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_SUPER_ADMIN')")
     public ModelAndView panel(ModelAndView modelAndView) {
         modelAndView.addObject("users", userService.getUserRoleViewModels());
-        return view("adminPanel", modelAndView);
+        return view("admin/adminPanel", modelAndView);
     }
 
     @PostMapping(value = "/admin/panel")
@@ -40,10 +40,9 @@ public class AdminPanelController extends BaseController {
 
     @ExceptionHandler(AuthorisationException.class)
     public ModelAndView authorisation(ModelAndView modelAndView){
-        modelAndView.setViewName("error");
         modelAndView.addObject("message", "You are not allowed to see this page!");
 
-        return view("error", modelAndView);
+        return view("basic/error", modelAndView);
     }
 
 }

@@ -46,7 +46,7 @@ public class ProfileController extends BaseController {
         userBindingModel.setPassword(null);
         modelAndView.addObject("user", userBindingModel);
 
-        return view("profile", modelAndView);
+        return view("user/profile", modelAndView);
     }
 
     @PatchMapping("/edit")
@@ -62,7 +62,7 @@ public class ProfileController extends BaseController {
             userBindingModel.setConfirmPassword(null);
             modelAndView.addObject("model", userBindingModel);
 
-            return view("profile", modelAndView);
+            return view("user/profile", modelAndView);
         }
 
         try {
@@ -71,6 +71,6 @@ public class ProfileController extends BaseController {
             e.printStackTrace();
         }
 
-        return view("profile", modelAndView);
+        return view("user/profile", modelAndView);
     }
 }

@@ -66,9 +66,9 @@ public class StandingsModelTransformer {
     public StandingsServiceModel transformToServiceModel(Standings standings) {
         return StandingsServiceModel.builder()
                 .team(teamModelTransformer.transformToTeamServiceModel(standings.getTeam()))
-                .index(standings.getIndex())
-                .conferenceIndex(standings.getIndex())
-                .divisionIndex(standings.getIndex())
+                .index(standings.getTeamPosition())
+                .conferenceIndex(standings.getConferencePosition())
+                .divisionIndex(standings.getTeamPosition())
                 .record(Record.builder()
                         .win(standings.getWins())
                         .losses(standings.getLosses())
@@ -91,7 +91,7 @@ public class StandingsModelTransformer {
     private Standings transformToStandingRecord(StandingsDto standingsDto) {
         return Standings.builder()
                 .team(Team.builder().fullName(standingsDto.getTeamName()).build())
-                .index(standingsDto.getPosition())
+                .teamPosition(standingsDto.getPosition())
                 .wins(standingsDto.getTeamRecord().getWin())
                 .losses(standingsDto.getTeamRecord().getLosses())
                 .conferenceWins(standingsDto.getConferenceRecord().getWin())

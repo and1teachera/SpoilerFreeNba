@@ -85,6 +85,7 @@ public class StandingsModelTransformer {
                 .divisionLosses(standingsServiceModel.getDivisionRecord().getLosses())
                 .divisionWins(standingsServiceModel.getDivisionRecord().getWin())
                 .streak(standingsServiceModel.getStreak())
+                .date(standingsServiceModel.getDate())
                 .build();
     }
 

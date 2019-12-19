@@ -134,9 +134,9 @@ public class StandingsServiceImpl implements StandingsService {
     }
 
     private List<StandingsServiceModel> simulateStandingsForDate(Date date,
-            List<StandingsServiceModel> currentTeamStanding, List<Game> games) {
+                                                                 List<StandingsServiceModel> currentTeamStanding, List<Game> games) {
         List<StandingsServiceModel> standingsServiceModels = remapStandingsServiceModelsToNextDay(currentTeamStanding,
-                                                                                                  date);
+                date);
         games.forEach(game -> changeStandingsDateAfterGame(game, standingsServiceModels));
         currentTeamStanding = standingsServiceModels;
         return standingsServiceModels;
@@ -153,20 +153,20 @@ public class StandingsServiceImpl implements StandingsService {
                         .equalsIgnoreCase(winner.getName()))
                 .findFirst()
                 .ifPresent(standingsServiceModel -> changeRecordOfWinner(standingsServiceModel,
-                                                                         isSameConferenceTeamsGame,
-                                                                         isSameDivisionsTeamsGame));
+                        isSameConferenceTeamsGame,
+                        isSameDivisionsTeamsGame));
         standingsServiceModels.stream()
                 .filter(standingsServiceModel -> standingsServiceModel.getTeam()
                         .getName()
                         .equalsIgnoreCase(looser.getName()))
                 .findFirst()
                 .ifPresent(standingsServiceModel -> changeRecordOLooser(standingsServiceModel,
-                                                                         isSameConferenceTeamsGame,
-                                                                         isSameDivisionsTeamsGame));
+                        isSameConferenceTeamsGame,
+                        isSameDivisionsTeamsGame));
     }
 
     private void changeRecordOLooser(StandingsServiceModel standingsServiceModel, boolean isSameConferenceTeamsGame,
-            boolean isSameDivisionsTeamsGame) {
+                                     boolean isSameDivisionsTeamsGame) {
         Record teamRecord = standingsServiceModel.getTeamRecord();
         Record conferenceRecord = standingsServiceModel.getConferenceRecord();
         Record divisionRecord = standingsServiceModel.getDivisionRecord();
@@ -185,7 +185,7 @@ public class StandingsServiceImpl implements StandingsService {
 
 
     private void changeRecordOfWinner(StandingsServiceModel standingsServiceModel, boolean isSameConferenceTeamsGame,
-            boolean isSameDivisionsTeamsGame) {
+                                      boolean isSameDivisionsTeamsGame) {
         Record teamRecord = standingsServiceModel.getTeamRecord();
         Record conferenceRecord = standingsServiceModel.getConferenceRecord();
         Record divisionRecord = standingsServiceModel.getDivisionRecord();
@@ -236,8 +236,8 @@ public class StandingsServiceImpl implements StandingsService {
                 .build();
 
         return processor.processTeamsAPIResponse(Optional.of(client.newCall(request).execute())
-                                                         .map(Response::body)
-                                                         .orElseThrow(UnresponsiveAPIException::new));
+                .map(Response::body)
+                .orElseThrow(UnresponsiveAPIException::new));
     }
 
     private Optional<Standings> getLastStanding(String teamName, List<Standings> standings) {
@@ -253,7 +253,7 @@ public class StandingsServiceImpl implements StandingsService {
             Score score = game.getScore();
             if (game.getDate().before(getCurrentDateWithoutTime()) && (score != null
                     && score.getHomeTeamPoints() != null && score.getAwayTeamPoints() != null)) {
-                if(!gamesToDate.containsKey(game.getDate())) {
+                if (!gamesToDate.containsKey(game.getDate())) {
                     gamesToDate.put(game.getDate(), new ArrayList<>());
                 }
                 gamesToDate.get(game.getDate()).add(game);
@@ -281,5 +281,15 @@ public class StandingsServiceImpl implements StandingsService {
                 .block();
 
         return Optional.ofNullable(teamsDto).map(TeamsDto::getTeamDtos).orElseThrow(UnresponsiveAPIException::new);
+    }
+
+    @Override
+    public List<StandingsServiceModel> getCurrentStandings() {
+        List<StandingsServiceModel> standingsServiceModels = standingsModelTransformer.transformEntitiesToStandingsServiceModels(
+                standingsRepository.findAll());
+        standingsServiceModels.sort(
+                Comparator.comparing(standingsServiceModel -> standingsServiceModel.getStreak().getWinPercentage())
+        );
+        return standingsServiceModels;
     }
 }

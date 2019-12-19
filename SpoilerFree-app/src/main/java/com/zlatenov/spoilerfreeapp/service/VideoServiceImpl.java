@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -56,6 +57,11 @@ public class VideoServiceImpl implements VideoService {
                 videoRepository.findByGameIn(gamesRepository.findByStartTimeUtc(date)));
     }
 
+    @Override
+    public List<VideoServiceModel> getAllVideos() {
+        return videoModelTransformer.transformToServiceModels(
+                videoRepository.findAll());
+    }
 
     @Override
     public void removeVideo(VideoServiceModel videoServiceModel) {
@@ -77,13 +83,16 @@ public class VideoServiceImpl implements VideoService {
 
     @Override
     public void fetchVideos() throws UnresponsiveAPIException {
-        List<Game> games = gamesRepository.findAllByStartTimeUtcBefore(DateUtil.getCurrentDateWithoutTime());
+        Date today = DateUtil.getCurrentDateWithoutTime();
+        Date beforeThreeDays = Date.from(today.toInstant().minus(3, ChronoUnit.DAYS));
+        List<Game> games = gamesRepository.findAllByStartTimeUtcBetween(beforeThreeDays, today);
+        GamesDto gamesDto = GamesDto.builder()
+                .gameDtos(gamesModelTransformer.transformToGameDtos(games))
+                .build();
         VideosDto videosDto = webClientBuilder.build()
                 .post()
                 .uri("localhost:8084/videos")
-                .body(Mono.just(GamesDto.builder()
-                        .gameDtos(gamesModelTransformer.transformToGameDtos(games))
-                        .build()), GamesDto.class)
+                .body(Mono.just(gamesDto), GamesDto.class)
                 .retrieve()
                 .bodyToMono(VideosDto.class)
                 .block();

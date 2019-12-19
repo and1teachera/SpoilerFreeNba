@@ -22,5 +22,5 @@ public interface StandingsService {
 
     List<StandingsServiceModel> getStandingsForDate(Date date);
 
-    //void fetchStandings() throws IOException, UnresponsiveAPIException;
+    List<StandingsServiceModel> getCurrentStandings();
 }

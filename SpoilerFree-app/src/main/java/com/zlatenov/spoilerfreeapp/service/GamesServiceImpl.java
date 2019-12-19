@@ -111,4 +111,9 @@ public class GamesServiceImpl implements GameService {
         return gamesModelTransformer.transformToServiceModels(
                 gamesRepository.findByHomeTeamOrAwayTeam(team, team));
     }
+
+    @Override
+    public List<GameServiceModel> getAllGames() {
+        return gamesModelTransformer.transformToServiceModels(gamesRepository.findAll());
+    }
 }

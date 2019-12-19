@@ -14,10 +14,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
+import static java.util.stream.Collectors.groupingBy;
 
 /**
  * @author Angel Zlatenov
@@ -41,10 +40,17 @@ public class StandingsServiceImpl implements StandingsService {
                 .retrieve()
                 .bodyToMono(StandingsDtos.class)
                 .block();
-        saveStandings(standingsModelTransformer.transformToStandings(Optional.ofNullable(standingsDtos)
+        List<Standings> standings = standingsModelTransformer.transformToStandings(Optional.ofNullable(standingsDtos)
                 .map(StandingsDtos::getStandingsDtos)
                 .orElseThrow(
-                        UnresponsiveAPIException::new)));
+                        UnresponsiveAPIException::new));
+        mapStandingsToTeams(standings);
+        saveStandings(standings);
+    }
+
+    private void mapStandingsToTeams(List<Standings> standings) {
+        Map<String, List<Team>> teamToFullName = teamRepository.findAll().stream().collect(groupingBy(Team::getFullName));
+        standings.forEach(standings1 -> standings1.setTeam(teamToFullName.get(standings1.getTeam().getFullName()).get(0)));
     }
 
     private void saveStandings(List<Standings> standings) {

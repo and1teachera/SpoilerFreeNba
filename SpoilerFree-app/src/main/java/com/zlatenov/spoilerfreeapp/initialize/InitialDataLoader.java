@@ -28,11 +28,34 @@ public class InitialDataLoader implements ApplicationListener<ContextRefreshedEv
         if (CollectionUtils.isEmpty(teamsService.getAllTeams())) {
             try {
                 teamsService.fetchAllTeams();
-                gamesService.fetchAllGames();
-                standingsService.fetchCurrentStandings();
-                videoService.fetchVideos();
+            } catch (UnresponsiveAPIException e) {
+                e.printStackTrace();
             }
-            catch (UnresponsiveAPIException e) {
+        }
+
+        if (CollectionUtils.isEmpty(gamesService.getAllGames())) {
+            try {
+                gamesService.fetchAllGames();
+
+            } catch (UnresponsiveAPIException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (CollectionUtils.isEmpty(standingsService.getCurrentStandings())) {
+            try {
+                standingsService.fetchCurrentStandings();
+
+            } catch (UnresponsiveAPIException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (CollectionUtils.isEmpty(videoService.getAllVideos())) {
+            try {
+                videoService.fetchVideos();
+
+            } catch (UnresponsiveAPIException e) {
                 e.printStackTrace();
             }
         }

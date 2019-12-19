@@ -9,6 +9,7 @@ import com.zlatenov.videoproviderservice.transformer.ModelTransformer;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class VideoProviderController {
     private ModelTransformer modelTransformer;
 
     @PostMapping(path = "/game/videos")
-    private ResponseEntity gameVideos(GameDto gameDto) {
+    private ResponseEntity gameVideos(@RequestBody GameDto gameDto) {
         List<Video> videosForGame = videoService.getVideosForGame(gameDto);
         VideosDto videosDto = VideosDto.builder().videoList(modelTransformer.transformVideosToDtoList(videosForGame)).build();
         return ResponseEntity
@@ -33,7 +34,7 @@ public class VideoProviderController {
     }
 
     @PostMapping(path = "/videos")
-    private ResponseEntity videos(GamesDto gamesDto) {
+    private ResponseEntity videos(@RequestBody GamesDto gamesDto) {
         List<Video> videos = videoService.getVideos(gamesDto);
         VideosDto videosDto = VideosDto.builder().videoList(modelTransformer.transformVideosToDtoList(videos)).build();
         return ResponseEntity

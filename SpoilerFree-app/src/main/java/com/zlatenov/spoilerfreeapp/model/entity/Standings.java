@@ -21,9 +21,9 @@ public class Standings extends BaseEntity {
 
     @OneToOne
     private Team team;
-    private Short index;
-    private Short conferenceIndex;
-    private Short divisionIndex;
+    private Short teamPosition;
+    private Short conferencePosition;
+    private Short divisionPosition;
     private Short wins;
     private Short losses;
     private Short conferenceWins;

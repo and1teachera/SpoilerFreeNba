@@ -21,4 +21,6 @@ public interface GameService {
     GameServiceModel getGameInformation(String gameName, String date);
 
     List<GameServiceModel> getGamesForTeam(String teamName);
+
+    List<GameServiceModel> getAllGames();
 }

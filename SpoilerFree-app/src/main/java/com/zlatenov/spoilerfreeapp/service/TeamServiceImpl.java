@@ -56,9 +56,4 @@ public class TeamServiceImpl implements TeamService {
         List<Team> teams = teamModelTransformer.transformToTeamsList(teamsDto);
         teamRepository.saveAll(teams);
     }
-//
-//    @Override
-//    public List<Team> getAllTeams() {
-//        return teamRepository.findAll();
-//    }
 }

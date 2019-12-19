@@ -27,7 +27,6 @@ public class ModelTransformer {
                 .homeTeamName(gameDto.getHomeTeamName())
                 .awayTeamName(gameDto.getAwayTeamName())
                 .date(DateUtil.parseDate(gameDto.getDate()))
-                .score(gameDto.getGameInformationDto().getScore())
                 .build();
     }
 

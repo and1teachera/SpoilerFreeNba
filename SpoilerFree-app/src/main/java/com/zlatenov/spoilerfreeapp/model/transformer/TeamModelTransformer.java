@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 public class TeamModelTransformer {
 
     private final ModelMapper modelMapper;
+    private final PlayersModelTransformer playersModelTransformer;
 
     public List<Team> transformToTeamsList(TeamsDto teamsDto) {
         return teamsDto.getTeamDtos().stream()
@@ -38,6 +39,7 @@ public class TeamModelTransformer {
                 .logo(teamDto.getLogo())
                 .confName(teamDto.getConfName())
                 .divName(teamDto.getDivName())
+                .players(playersModelTransformer.transformToPlayers(teamDto.getPlayerDtos()))
                 .build();
     }
 
